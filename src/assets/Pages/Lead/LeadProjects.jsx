@@ -1,5 +1,5 @@
 import React from "react";
-import LeadSidebar from "../../components/Lead/LeadSidebar";
+import LeadSidebar from "../../Components/Lead/LeadSidebar";
 import {
   FiSearch,
   FiFolder,
