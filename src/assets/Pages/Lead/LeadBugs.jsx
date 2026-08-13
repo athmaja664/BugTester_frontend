@@ -5,6 +5,7 @@ import {
   FiCheckCircle,
   FiClock,
   FiTrendingUp,
+  FiPlus,
 } from "react-icons/fi";
 import { BsBug } from "react-icons/bs";
 import LeadSidebar from "../../Components/Lead/LeadSidebar";
@@ -293,6 +294,15 @@ function LeadBugs() {
                   List of bugs assigned across your projects
                 </p>
               </div>
+
+              {/* Report Bug Button */}
+              <button
+                type="button"
+                className="flex items-center gap-2 px-4 h-10 rounded-[8px] bg-[#f0a83b] hover:bg-[#e39b2f] text-[#0d0f14] text-[13px] font-semibold transition-colors"
+              >
+                <FiPlus size={16} />
+                Report Bug
+              </button>
 
             </div>
 

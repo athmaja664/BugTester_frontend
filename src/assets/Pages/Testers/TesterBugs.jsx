@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import TesterSidebar from "../../Components/Tester/TesterSidebar";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BsBug } from "react-icons/bs";
@@ -7,10 +7,44 @@ import {
   FiClock,
   FiCheckCircle,
   FiAlertCircle,
+  FiX,
 } from "react-icons/fi";
 import { HiOutlineCalendar } from "react-icons/hi";
 
 function TesterBugs() {
+  const [showReportModal, setShowReportModal] = useState(false);
+
+  const [bugForm, setBugForm] = useState({
+    title: "",
+    project: "",
+    severity: "Medium",
+    description: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    setBugForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleReportBug = (e) => {
+    e.preventDefault();
+
+    console.log("Bug Report:", bugForm);
+
+    setShowReportModal(false);
+
+    setBugForm({
+      title: "",
+      project: "",
+      severity: "Medium",
+      description: "",
+    });
+  };
+
   return (
     <div className="flex min-h-screen bg-[#0d0f14]">
 
@@ -78,17 +112,31 @@ function TesterBugs() {
 
             </div>
 
-            {/* Bug Count */}
-            <div className="flex items-center gap-2 px-3.5 h-[38px] rounded-[8px] bg-white/[0.03] border border-white/[0.06]">
+            <div className="flex items-center gap-3">
 
-              <BsBug
-                size={16}
-                className="text-[#f87171]"
-              />
+              {/* Bug Count */}
+              <div className="flex items-center gap-2 px-3.5 h-[38px] rounded-[8px] bg-white/[0.03] border border-white/[0.06]">
 
-              <span className="text-[13px] text-[#a8abb8]">
-                25 Reported Bugs
-              </span>
+                <BsBug
+                  size={16}
+                  className="text-[#f87171]"
+                />
+
+                <span className="text-[13px] text-[#a8abb8]">
+                  25 Reported Bugs
+                </span>
+
+              </div>
+
+              {/* Report Bug Button */}
+              <button
+                type="button"
+                onClick={() => setShowReportModal(true)}
+                className="flex items-center justify-center gap-2 h-[38px] px-4 rounded-[8px] bg-[#f0a83b] hover:bg-[#ffc15c] text-[#0d0f14] text-[12.5px] font-semibold transition-colors cursor-pointer"
+              >
+                <BsBug size={15} />
+                Report Bug
+              </button>
 
             </div>
 
@@ -180,22 +228,17 @@ function TesterBugs() {
 
             </div>
 
-            {/* ================================================= */}
             {/* Bug Card 1 */}
-            {/* ================================================= */}
-
             <div className="p-5 rounded-[12px] bg-white/[0.02] border border-white/[0.06] mb-4">
 
               <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
 
                 <div className="flex items-start gap-4">
 
-                  {/* Bug Icon */}
                   <span className="flex items-center justify-center w-11 h-11 rounded-[9px] bg-[#f87171]/[0.12] text-[#f87171] shrink-0">
                     <BsBug size={20} />
                   </span>
 
-                  {/* Bug Information */}
                   <div>
 
                     <div className="flex flex-wrap items-center gap-2">
@@ -222,7 +265,6 @@ function TesterBugs() {
 
                 </div>
 
-                {/* View Bug */}
                 <button
                   type="button"
                   className="flex items-center justify-center gap-1.5 h-[38px] px-4 rounded-[8px] text-[12.5px] font-medium text-[#f0a83b] border border-[#f0a83b]/20 hover:bg-[#f0a83b]/[0.08] transition-colors cursor-pointer shrink-0"
@@ -233,7 +275,6 @@ function TesterBugs() {
 
               </div>
 
-              {/* Bug Details */}
               <div className="flex flex-wrap items-center gap-5 mt-5 pt-4 border-t border-white/[0.06]">
 
                 <span className="flex items-center gap-1.5 text-[12px] text-[#f87171]">
@@ -255,22 +296,17 @@ function TesterBugs() {
 
             </div>
 
-            {/* ================================================= */}
             {/* Bug Card 2 */}
-            {/* ================================================= */}
-
             <div className="p-5 rounded-[12px] bg-white/[0.02] border border-white/[0.06] mb-4">
 
               <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
 
                 <div className="flex items-start gap-4">
 
-                  {/* Bug Icon */}
                   <span className="flex items-center justify-center w-11 h-11 rounded-[9px] bg-[#f0a83b]/[0.12] text-[#f0a83b] shrink-0">
                     <BsBug size={20} />
                   </span>
 
-                  {/* Bug Information */}
                   <div>
 
                     <div className="flex flex-wrap items-center gap-2">
@@ -297,7 +333,6 @@ function TesterBugs() {
 
                 </div>
 
-                {/* View Bug */}
                 <button
                   type="button"
                   className="flex items-center justify-center gap-1.5 h-[38px] px-4 rounded-[8px] text-[12.5px] font-medium text-[#f0a83b] border border-[#f0a83b]/20 hover:bg-[#f0a83b]/[0.08] transition-colors cursor-pointer shrink-0"
@@ -308,7 +343,6 @@ function TesterBugs() {
 
               </div>
 
-              {/* Bug Details */}
               <div className="flex flex-wrap items-center gap-5 mt-5 pt-4 border-t border-white/[0.06]">
 
                 <span className="flex items-center gap-1.5 text-[12px] text-[#f0a83b]">
@@ -330,22 +364,17 @@ function TesterBugs() {
 
             </div>
 
-            {/* ================================================= */}
             {/* Bug Card 3 */}
-            {/* ================================================= */}
-
             <div className="p-5 rounded-[12px] bg-white/[0.02] border border-white/[0.06] mb-4">
 
               <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
 
                 <div className="flex items-start gap-4">
 
-                  {/* Bug Icon */}
                   <span className="flex items-center justify-center w-11 h-11 rounded-[9px] bg-[#4ade80]/[0.12] text-[#4ade80] shrink-0">
                     <BsBug size={20} />
                   </span>
 
-                  {/* Bug Information */}
                   <div>
 
                     <div className="flex flex-wrap items-center gap-2">
@@ -372,7 +401,6 @@ function TesterBugs() {
 
                 </div>
 
-                {/* View Bug */}
                 <button
                   type="button"
                   className="flex items-center justify-center gap-1.5 h-[38px] px-4 rounded-[8px] text-[12.5px] font-medium text-[#f0a83b] border border-[#f0a83b]/20 hover:bg-[#f0a83b]/[0.08] transition-colors cursor-pointer shrink-0"
@@ -383,7 +411,6 @@ function TesterBugs() {
 
               </div>
 
-              {/* Bug Details */}
               <div className="flex flex-wrap items-center gap-5 mt-5 pt-4 border-t border-white/[0.06]">
 
                 <span className="flex items-center gap-1.5 text-[12px] text-[#4ade80]">
@@ -405,22 +432,17 @@ function TesterBugs() {
 
             </div>
 
-            {/* ================================================= */}
             {/* Bug Card 4 */}
-            {/* ================================================= */}
-
             <div className="p-5 rounded-[12px] bg-white/[0.02] border border-white/[0.06]">
 
               <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
 
                 <div className="flex items-start gap-4">
 
-                  {/* Bug Icon */}
                   <span className="flex items-center justify-center w-11 h-11 rounded-[9px] bg-[#f87171]/[0.12] text-[#f87171] shrink-0">
                     <BsBug size={20} />
                   </span>
 
-                  {/* Bug Information */}
                   <div>
 
                     <div className="flex flex-wrap items-center gap-2">
@@ -447,7 +469,6 @@ function TesterBugs() {
 
                 </div>
 
-                {/* View Bug */}
                 <button
                   type="button"
                   className="flex items-center justify-center gap-1.5 h-[38px] px-4 rounded-[8px] text-[12.5px] font-medium text-[#f0a83b] border border-[#f0a83b]/20 hover:bg-[#f0a83b]/[0.08] transition-colors cursor-pointer shrink-0"
@@ -458,7 +479,6 @@ function TesterBugs() {
 
               </div>
 
-              {/* Bug Details */}
               <div className="flex flex-wrap items-center gap-5 mt-5 pt-4 border-t border-white/[0.06]">
 
                 <span className="flex items-center gap-1.5 text-[12px] text-[#f87171]">
@@ -563,6 +583,171 @@ function TesterBugs() {
 
         </div>
       </div>
+
+      {/* ===================================================== */}
+      {/* REPORT BUG MODAL */}
+      {/* ===================================================== */}
+
+      {showReportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-black/60 backdrop-blur-sm">
+
+          <div className="w-full max-w-[520px] bg-[#161922] border border-white/[0.08] rounded-[14px] shadow-2xl">
+
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.06]">
+
+              <div className="flex items-center gap-3">
+
+                <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#f87171]/[0.12] text-[#f87171]">
+                  <BsBug size={18} />
+                </span>
+
+                <div>
+                  <h2 className="text-[16px] font-semibold text-white">
+                    Report a Bug
+                  </h2>
+
+                  <p className="text-[12px] text-[#5b606c] mt-1">
+                    Submit a bug found during testing
+                  </p>
+                </div>
+
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowReportModal(false)}
+                className="flex items-center justify-center w-8 h-8 rounded-[7px] text-[#5b606c] hover:text-white hover:bg-white/[0.05] cursor-pointer"
+              >
+                <FiX size={18} />
+              </button>
+
+            </div>
+
+            {/* Modal Form */}
+            <form
+              onSubmit={handleReportBug}
+              className="p-6"
+            >
+
+              {/* Bug Title */}
+              <div className="mb-5">
+
+                <label className="block text-[12.5px] font-medium text-[#c7c9d1] mb-2">
+                  Bug Title
+                </label>
+
+                <input
+                  type="text"
+                  name="title"
+                  value={bugForm.title}
+                  onChange={handleInputChange}
+                  placeholder="Enter bug title"
+                  required
+                  className="w-full h-[42px] px-3.5 rounded-[8px] bg-[#0d0f14] border border-white/10 outline-none text-[13px] text-white placeholder:text-[#5b606c] focus:border-[#f0a83b]/50"
+                />
+
+              </div>
+
+              {/* Project */}
+              <div className="mb-5">
+
+                <label className="block text-[12.5px] font-medium text-[#c7c9d1] mb-2">
+                  Project
+                </label>
+
+                <select
+                  name="project"
+                  value={bugForm.project}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full h-[42px] px-3.5 rounded-[8px] bg-[#0d0f14] border border-white/10 outline-none text-[13px] text-[#a8abb8] focus:border-[#f0a83b]/50 cursor-pointer"
+                >
+                  <option value="">Select project</option>
+                  <option value="E-Commerce Platform">
+                    E-Commerce Platform
+                  </option>
+                  <option value="Banking Dashboard">
+                    Banking Dashboard
+                  </option>
+                  <option value="Travel Booking App">
+                    Travel Booking App
+                  </option>
+                  <option value="Employee Management Portal">
+                    Employee Management Portal
+                  </option>
+                </select>
+
+              </div>
+
+              {/* Severity */}
+              <div className="mb-5">
+
+                <label className="block text-[12.5px] font-medium text-[#c7c9d1] mb-2">
+                  Severity
+                </label>
+
+                <select
+                  name="severity"
+                  value={bugForm.severity}
+                  onChange={handleInputChange}
+                  className="w-full h-[42px] px-3.5 rounded-[8px] bg-[#0d0f14] border border-white/10 outline-none text-[13px] text-[#a8abb8] focus:border-[#f0a83b]/50 cursor-pointer"
+                >
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                  <option value="Critical">Critical</option>
+                </select>
+
+              </div>
+
+              {/* Description */}
+              <div className="mb-6">
+
+                <label className="block text-[12.5px] font-medium text-[#c7c9d1] mb-2">
+                  Description
+                </label>
+
+                <textarea
+                  name="description"
+                  value={bugForm.description}
+                  onChange={handleInputChange}
+                  placeholder="Describe the bug, steps to reproduce, expected behavior, and actual behavior..."
+                  rows={5}
+                  required
+                  className="w-full px-3.5 py-3 rounded-[8px] bg-[#0d0f14] border border-white/10 outline-none text-[13px] leading-5 text-white placeholder:text-[#5b606c] focus:border-[#f0a83b]/50 resize-none"
+                />
+
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center justify-end gap-3">
+
+                <button
+                  type="button"
+                  onClick={() => setShowReportModal(false)}
+                  className="h-[40px] px-4 rounded-[8px] text-[12.5px] font-medium text-[#a8abb8] border border-white/[0.08] hover:bg-white/[0.04] hover:text-white transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="flex items-center gap-2 h-[40px] px-5 rounded-[8px] bg-[#f0a83b] hover:bg-[#ffc15c] text-[#0d0f14] text-[12.5px] font-semibold transition-colors cursor-pointer"
+                >
+                  <BsBug size={15} />
+                  Submit Bug
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+      )}
+
     </div>
   );
 }

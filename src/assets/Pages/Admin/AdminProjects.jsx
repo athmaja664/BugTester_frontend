@@ -2,7 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Sidebar from "../../Components/Admin/Sidebar";
 
-import { AiOutlineSearch, AiOutlineProject } from "react-icons/ai";
+import {
+    AiOutlineSearch,
+    AiOutlineProject,
+    AiOutlinePlus,
+} from "react-icons/ai";
 import { HiOutlineUsers } from "react-icons/hi";
 import { BsBug } from "react-icons/bs";
 import { MdArrowForward } from "react-icons/md";
@@ -114,14 +118,28 @@ function AdminProjects() {
                 <div className="flex-1 p-5 lg:p-8">
 
                     {/* page header */}
-                    <div className="mb-8">
-                        <h1 className="text-[22px] font-semibold text-white">
-                            Projects
-                        </h1>
+                    <div className="flex items-center justify-between mb-8">
 
-                        <p className="text-[14px] text-[#8b909c] mt-1">
-                            Manage and monitor all BugTester projects
-                        </p>
+                        <div>
+                            <h1 className="text-[22px] font-semibold text-white">
+                                Projects
+                            </h1>
+
+                            <p className="text-[14px] text-[#8b909c] mt-1">
+                                Manage and monitor all BugTester projects
+                            </p>
+                        </div>
+
+                        {/* Add Project */}
+                        <button
+                            type="button"
+                            onClick={() => navigate("/admin/projects/add")}
+                            className="flex items-center gap-2 px-4 h-[42px] rounded-[8px] text-[14px] font-semibold text-[#0d0f14] bg-[#f0a83b] hover:bg-[#f5bc6b] transition-colors cursor-pointer shrink-0"
+                        >
+                            <AiOutlinePlus size={17} />
+                            Add Project
+                        </button>
+
                     </div>
 
                     {/* statistics */}

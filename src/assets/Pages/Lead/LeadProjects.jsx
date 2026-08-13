@@ -8,6 +8,7 @@ import {
   FiUsers,
   FiAlertCircle,
   FiMoreHorizontal,
+  FiPlus,
 } from "react-icons/fi";
 
 function LeadProjects() {
@@ -22,6 +23,7 @@ function LeadProjects() {
 
         {/* Top Bar */}
         <div className="h-[72px] border-b border-white/[0.06] flex items-center justify-between px-8">
+
           <div>
             <h1 className="text-[20px] font-semibold text-white">
               Projects
@@ -51,14 +53,27 @@ function LeadProjects() {
         <div className="p-8">
 
           {/* Section Header */}
-          <div className="mb-6">
-            <h2 className="text-[17px] font-semibold text-white">
-              All Projects
-            </h2>
+          <div className="flex items-center justify-between mb-6">
 
-            <p className="text-[13px] text-[#5b606c] mt-1">
-              Projects assigned to your team
-            </p>
+            <div>
+              <h2 className="text-[17px] font-semibold text-white">
+                All Projects
+              </h2>
+
+              <p className="text-[13px] text-[#5b606c] mt-1">
+                Projects assigned to your team
+              </p>
+            </div>
+
+            {/* Add Project Button */}
+            <button
+              type="button"
+              className="flex items-center gap-2 px-4 h-[40px] rounded-[8px] text-[13.5px] font-semibold text-[#0d0f14] bg-[#f0a83b] hover:bg-[#f5bc6b] transition-colors cursor-pointer"
+            >
+              <FiPlus size={16} />
+              Add Project
+            </button>
+
           </div>
 
           {/* Project Cards */}
@@ -148,7 +163,6 @@ function LeadProjects() {
 
             </div>
 
-
             {/* Project 2 */}
             <div className="bg-[#161922] border border-white/[0.06] rounded-[10px] p-5 hover:border-white/[0.10] transition-colors">
 
@@ -229,7 +243,6 @@ function LeadProjects() {
 
             </div>
 
-
             {/* Project 3 */}
             <div className="bg-[#161922] border border-white/[0.06] rounded-[10px] p-5 hover:border-white/[0.10] transition-colors">
 
@@ -309,7 +322,6 @@ function LeadProjects() {
               </div>
 
             </div>
-
 
             {/* Project 4 */}
             <div className="bg-[#161922] border border-white/[0.06] rounded-[10px] p-5 hover:border-white/[0.10] transition-colors">
