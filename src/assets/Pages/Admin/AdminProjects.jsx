@@ -1,49 +1,84 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/Admin/Sidebar";
+import AddProjectModal from "../../Components/Admin/AddProjectModal";
+import EditProjectModal from "../../Components/Admin/EditProjectModal";
+import { AiOutlineSearch, AiOutlinePlus } from "react-icons/ai";
+import { MdOutlineNotificationsNone } from "react-icons/md";
+import { HiOutlinePencilSquare, HiOutlineTrash, HiOutlineCalendar } from "react-icons/hi2";
+import { AiOutlineProject } from "react-icons/ai";
+import toast from "react-hot-toast";
+import { deleteProjectAPI, getProjectsAPI } from "../../../../services/allAPI";
 
-import {
-    AiOutlineSearch,
-    AiOutlineProject,
-    AiOutlinePlus,
-} from "react-icons/ai";
-import { HiOutlineUsers } from "react-icons/hi";
-import { BsBug } from "react-icons/bs";
-import { MdArrowForward } from "react-icons/md";
+const statusColors = {
+    Planning: "bg-[#576aff]/[0.12] text-[#8b98ff] border-[#576aff]/25",
+    "In Progress": "bg-[#f0a83b]/[0.12] text-[#f0a83b] border-[#f0a83b]/25",
+    Completed: "bg-[#4ade80]/[0.12] text-[#4ade80] border-[#4ade80]/25",
+    "On Hold": "bg-[#f26d6d]/[0.12] text-[#f26d6d] border-[#f26d6d]/25",
+}
 
 function AdminProjects() {
-    const navigate = useNavigate();
+    const [showAddModal, setShowAddModal] = useState(false)
+    const [confirmDeleteId, setConfirmDeleteId] = useState(null)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [projectData, setProjectData] = useState([])
+    const [searchTerm, setSearchTerm] = useState("")
+    const [statusFilter, setStatusFilter] = useState("")
+    const token = localStorage.getItem('token')
+    const [selectedProject, setSelectedProject] = useState(null)
+    const [showEditModal, setShowEditModal] = useState(false)
 
-    // profile dropdown
-    const [showProfileMenu, setShowProfileMenu] = useState(false);
-    const profileRef = useRef(null);
+    const getProjects = async () => {
+        try {
+            const reqHeader = { Authorization: `Bearer ${token}` }
+            const response = await getProjectsAPI(reqHeader)
+            if (response.status === 200) {
+                setProjectData(response.data.projects)
+            }
+        } catch (err) {
+            toast.error(err?.response?.data?.message || 'Failed to fetch projects')
+        }
+    }
+
+    const handleDelete = async (id) => {
+        try {
+            const reqHeader = { Authorization: `Bearer ${token}` }
+            const response = await deleteProjectAPI(id, reqHeader)
+            if (response.status === 200) {
+                setConfirmDeleteId(null)
+                toast.success('Project deleted successfully')
+                getProjects()
+            }
+        } catch (err) {
+            setConfirmDeleteId(null)
+            toast.error(err?.response?.data?.message || 'Failed to delete project')
+        }
+    }
 
     useEffect(() => {
-        const handleClickOutsideProfile = (e) => {
-            if (
-                profileRef.current &&
-                !profileRef.current.contains(e.target)
-            ) {
-                setShowProfileMenu(false);
-            }
-        };
+        getProjects()
+    }, [])
 
-        document.addEventListener("mousedown", handleClickOutsideProfile);
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [searchTerm, statusFilter])
 
-        return () => {
-            document.removeEventListener(
-                "mousedown",
-                handleClickOutsideProfile
-            );
-        };
-    }, []);
+    const filteredProjects = projectData.filter((item) => {
+        const matchesSearch = item.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        const matchesStatus = statusFilter ? item.status === statusFilter : true
+        return matchesSearch && matchesStatus
+    })
+
+    const projectsPerPage = 8
+    const lastIndex = currentPage * projectsPerPage
+    const firstIndex = lastIndex - projectsPerPage
+    const currentProjects = filteredProjects.slice(firstIndex, lastIndex)
+    const totalPages = Math.ceil(filteredProjects.length / projectsPerPage)
 
     return (
         <div className="flex min-h-screen bg-[#0d0f14]">
 
             <Sidebar />
 
-            {/* right column */}
             <div className="flex-1 flex flex-col min-w-0">
 
                 {/* header */}
@@ -54,64 +89,23 @@ function AdminProjects() {
                     </h1>
 
                     <div className="flex items-center gap-4">
+                        <span className="relative flex items-center justify-center w-10 h-10 rounded-[8px] text-[#a8abb8] hover:bg-white/[0.04] hover:text-white cursor-pointer">
+                            <MdOutlineNotificationsNone size={20} />
+                            <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#f0a83b]"></span>
+                        </span>
 
-                        {/* search */}
-                        <div className="hidden sm:flex items-center gap-2 h-[40px] px-3.5 w-[240px] bg-white/[0.03] border border-white/10 rounded-[8px] focus-within:border-[#f0a83b]">
-                            <AiOutlineSearch
-                                className="text-[#5b606c]"
-                                size={17}
-                            />
-
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className="flex-1 w-full bg-transparent border-none outline-none text-[13.5px] text-white placeholder:text-[#5b606c]"
-                            />
-                        </div>
-
-                        {/* profile */}
-                        <div
-                            className="relative"
-                            ref={profileRef}
-                        >
-                            <span
-                                onClick={() =>
-                                    setShowProfileMenu(!showProfileMenu)
-                                }
-                                className="flex items-center gap-2.5 pl-2 pr-1 sm:pr-3 h-10 rounded-[8px] hover:bg-white/[0.04] cursor-pointer"
-                            >
+                        <div className="relative">
+                            <span className="flex items-center gap-2.5 pl-2 pr-1 sm:pr-3 h-10 rounded-[8px] hover:bg-white/[0.04] cursor-pointer">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.06] text-[#c7c9d1] text-[12.5px] font-semibold">
                                     AD
                                 </span>
-
                                 <span className="hidden sm:block text-[13.5px] font-medium text-white">
                                     Admin
                                 </span>
                             </span>
-
-                            {showProfileMenu && (
-                                <div className="absolute top-full right-0 mt-2 w-44 bg-[#161922] rounded-lg shadow-lg border border-white/[0.08] py-2 z-20">
-
-                                    <span
-                                        onClick={() =>
-                                            navigate("/profile")
-                                        }
-                                        className="block px-4 py-2 text-sm text-[#a8abb8] hover:bg-white/[0.04] hover:text-white cursor-pointer"
-                                    >
-                                        Profile
-                                    </span>
-
-                                    <span
-                                        className="block px-4 py-2 text-sm text-[#a8abb8] hover:bg-white/[0.04] hover:text-white cursor-pointer"
-                                    >
-                                        Logout
-                                    </span>
-
-                                </div>
-                            )}
                         </div>
-
                     </div>
+
                 </div>
 
                 {/* main content */}
@@ -119,514 +113,201 @@ function AdminProjects() {
 
                     {/* page header */}
                     <div className="flex items-center justify-between mb-8">
-
                         <div>
                             <h1 className="text-[22px] font-semibold text-white">
                                 Projects
                             </h1>
-
                             <p className="text-[14px] text-[#8b909c] mt-1">
-                                Manage and monitor all BugTester projects
+                                Manage all active and past projects
                             </p>
                         </div>
 
-                        {/* Add Project */}
                         <button
                             type="button"
-                            onClick={() => navigate("/admin/projects/add")}
-                            className="flex items-center gap-2 px-4 h-[42px] rounded-[8px] text-[14px] font-semibold text-[#0d0f14] bg-[#f0a83b] hover:bg-[#f5bc6b] transition-colors cursor-pointer shrink-0"
+                            onClick={() => setShowAddModal(true)}
+                            className="flex items-center gap-2 px-4 h-[42px] rounded-[8px] text-[14px] font-semibold text-[#0d0f14] bg-[#f0a83b] hover:bg-[#f5bc6b] transition-colors cursor-pointer"
                         >
                             <AiOutlinePlus size={17} />
                             Add Project
                         </button>
+                    </div>
+
+                    {/* filter panel */}
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-4 p-5 bg-[#161922] border border-white/[0.06] rounded-[14px] mb-6">
+
+                        <div className="flex flex-col gap-2 flex-1">
+                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                                Search
+                            </label>
+                            <div className="relative flex items-center gap-2 h-[42px] px-3.5 bg-white/[0.03] border border-white/10 rounded-[8px] focus-within:border-[#f0a83b]">
+                                <AiOutlineSearch className="text-[#5b606c]" size={16} />
+                                <input
+                                    type="text"
+                                    placeholder="Search by project name"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="flex-1 w-full bg-transparent border-none outline-none text-[13.5px] text-white placeholder:text-[#5b606c]"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2 w-full sm:w-[200px]">
+                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                                Status
+                            </label>
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                className="w-full h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-left text-white cursor-pointer outline-none focus:border-[#f0a83b]"
+                            >
+                                <option className="bg-[#161922]" value="">All Statuses</option>
+                                <option className="bg-[#161922]" value="Planning">Planning</option>
+                                <option className="bg-[#161922]" value="In Progress">In Progress</option>
+                                <option className="bg-[#161922]" value="Completed">Completed</option>
+                                <option className="bg-[#161922]" value="On Hold">On Hold</option>
+                            </select>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setSearchTerm("")
+                                setStatusFilter("")
+                            }}
+                            className="h-[42px] px-5 rounded-[8px] text-[13.5px] font-medium text-[#a8abb8] border border-white/10 hover:bg-white/[0.04] hover:text-white transition-colors cursor-pointer whitespace-nowrap"
+                        >
+                            Clear
+                        </button>
 
                     </div>
 
-                    {/* statistics */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-
-                        {/* total projects */}
-                        <div className="flex flex-col gap-4 p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-
-                            <div className="flex items-center justify-between">
-
-                                <span className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#f0a83b]/[0.12] text-[#f0a83b]">
-                                    <AiOutlineProject size={19} />
-                                </span>
-
-                            </div>
-
-                            <div>
-                                <h2 className="text-[26px] font-semibold text-white">
-                                    12
-                                </h2>
-
-                                <p className="text-[13px] text-[#8b909c] mt-0.5">
-                                    Total Projects
-                                </p>
-                            </div>
-
-                        </div>
-
-                        {/* active projects */}
-                        <div className="flex flex-col gap-4 p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-
-                            <div className="flex items-center justify-between">
-
-                                <span className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#4ade80]/[0.12] text-[#4ade80]">
-                                    <AiOutlineProject size={19} />
-                                </span>
-
-                            </div>
-
-                            <div>
-                                <h2 className="text-[26px] font-semibold text-white">
-                                    10
-                                </h2>
-
-                                <p className="text-[13px] text-[#8b909c] mt-0.5">
-                                    Active Projects
-                                </p>
-                            </div>
-
-                        </div>
-
-                        {/* on hold */}
-                        <div className="flex flex-col gap-4 p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-
-                            <div className="flex items-center justify-between">
-
-                                <span className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-white/[0.06] text-[#8b909c]">
-                                    <AiOutlineProject size={19} />
-                                </span>
-
-                            </div>
-
-                            <div>
-                                <h2 className="text-[26px] font-semibold text-white">
-                                    2
-                                </h2>
-
-                                <p className="text-[13px] text-[#8b909c] mt-0.5">
-                                    On Hold
-                                </p>
-                            </div>
-
-                        </div>
-
-                        {/* total bugs */}
-                        <div className="flex flex-col gap-4 p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-
-                            <div className="flex items-center justify-between">
-
-                                <span className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#576aff]/[0.12] text-[#8b98ff]">
-                                    <BsBug size={18} />
-                                </span>
-
-                            </div>
-
-                            <div>
-                                <h2 className="text-[26px] font-semibold text-white">
-                                    132
-                                </h2>
-
-                                <p className="text-[13px] text-[#8b909c] mt-0.5">
-                                    Total Bugs
-                                </p>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    {/* projects */}
+                    {/* projects cards */}
                     <div className="p-6 bg-[#161922] border border-white/[0.06] rounded-[14px]">
 
-                        <div className="flex items-center justify-between mb-6">
+                        {currentProjects.length === 0 ? (
+                            <div className="py-8 text-center text-[13.5px] text-[#5b606c]">
+                                No projects found
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 
-                            <h2 className="text-[16px] font-semibold text-white">
-                                All Projects
-                            </h2>
-
-                            <Link
-                                to="/admin/projects"
-                                className="flex items-center gap-1.5 text-[13px] font-medium text-[#f0a83b] hover:opacity-85"
-                            >
-                                View all projects
-                                <MdArrowForward size={15} />
-                            </Link>
-
-                        </div>
-
-                        <div className="overflow-x-auto">
-
-                            <table className="w-full text-left border-collapse min-w-[780px]">
-
-                                <thead>
-                                    <tr className="border-b border-white/[0.06]">
-
-                                        <th className="pb-3 text-[12px] font-medium uppercase tracking-wide text-[#5b606c]">
-                                            Project
-                                        </th>
-
-                                        <th className="pb-3 text-[12px] font-medium uppercase tracking-wide text-[#5b606c]">
-                                            Lead
-                                        </th>
-
-                                        <th className="pb-3 text-[12px] font-medium uppercase tracking-wide text-[#5b606c]">
-                                            Members
-                                        </th>
-
-                                        <th className="pb-3 text-[12px] font-medium uppercase tracking-wide text-[#5b606c]">
-                                            Bugs
-                                        </th>
-
-                                        <th className="pb-3 text-[12px] font-medium uppercase tracking-wide text-[#5b606c]">
-                                            Status
-                                        </th>
-
-                                        <th className="pb-3 text-[12px] font-medium uppercase tracking-wide text-[#5b606c]">
-                                            Updated
-                                        </th>
-
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-
-                                    <tr
-                                        onClick={() =>
-                                            navigate("/admin/projects/1")
-                                        }
-                                        className="border-b border-white/[0.04] cursor-pointer hover:bg-white/[0.02]"
+                                {currentProjects.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        className="flex flex-col gap-4 p-4 bg-white/[0.02] border border-white/[0.06] rounded-[12px] hover:bg-white/[0.04] hover:border-white/10 transition-colors"
                                     >
 
-                                        <td className="py-3.5">
-
-                                            <div className="flex items-center gap-2.5">
-
-                                                <span className="flex items-center justify-center w-8 h-8 rounded-[7px] bg-[#f0a83b]/[0.12] text-[#f0a83b] text-[11.5px] font-semibold shrink-0">
-                                                    PG
-                                                </span>
-
-                                                <div>
-                                                    <p className="text-[14px] font-medium text-white">
-                                                        Payment Gateway
-                                                    </p>
-
-                                                    <p className="text-[12px] text-[#5b606c] mt-0.5">
-                                                        Checkout & billing services
-                                                    </p>
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] text-[#a8abb8]">
-                                            Meera Nair
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] text-[#a8abb8]">
-                                            6
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] font-medium text-[#f0a83b]">
-                                            24
-                                        </td>
-
-                                        <td className="py-3.5">
-
-                                            <span className="inline-flex px-2.5 py-1 text-[12px] font-medium rounded-[5px] bg-[#4ade80]/[0.12] text-[#4ade80] border border-[#4ade80]/25">
-                                                Active
+                                        <div className="flex items-start justify-between gap-2">
+                                            <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#c084fc]/[0.12] text-[#c084fc] shrink-0">
+                                                <AiOutlineProject size={17} />
                                             </span>
 
-                                        </td>
+                                            <span className={`inline-flex px-2.5 py-1 text-[11.5px] font-medium rounded-[5px] border ${statusColors[item.status] || "bg-white/[0.05] text-[#8b909c] border-white/10"}`}>
+                                                {item.status}
+                                            </span>
+                                        </div>
 
-                                        <td className="py-3.5 text-[13px] text-[#5b606c]">
-                                            2 hrs ago
-                                        </td>
+                                        <div>
+                                            <h3 className="text-[14.5px] font-semibold text-white leading-snug line-clamp-1">
+                                                {item.name}
+                                            </h3>
 
-                                    </tr>
+                                            {item.description && (
+                                                <p className="text-[12.5px] text-[#5b606c] mt-1 line-clamp-2">
+                                                    {item.description}
+                                                </p>
+                                            )}
+                                        </div>
 
-                                    <tr
-                                        onClick={() =>
-                                            navigate("/admin/projects/2")
-                                        }
-                                        className="border-b border-white/[0.04] cursor-pointer hover:bg-white/[0.02]"
+                                        <div className="flex items-center justify-between pt-1">
+                                            <div className="flex items-center gap-1.5 text-[12px] text-[#a8abb8]">
+                                                <HiOutlineCalendar className="text-[#5b606c] shrink-0" size={14} />
+                                                {item.start_date ? new Date(item.start_date).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) : "—"}
+                                            </div>
+
+                                            <div className="flex items-center gap-1.5 text-[12px] text-[#a8abb8]">
+                                                Due{" "}
+                                                {item.due_date ? new Date(item.due_date).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) : "—"}
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-2 pt-3 border-t border-white/[0.06]">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setSelectedProject(item)
+                                                    setShowEditModal(true)
+                                                }}
+                                                className="flex-1 flex items-center justify-center gap-1.5 h-9 text-xs font-medium rounded-[6px] bg-[#576aff]/[0.12] text-[#8b98ff] border border-[#576aff]/25 hover:bg-[#576aff]/[0.2] transition-colors cursor-pointer"
+                                            >
+                                                <HiOutlinePencilSquare size={14} />
+                                                Edit
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setConfirmDeleteId(item.id)}
+                                                className="flex-1 flex items-center justify-center gap-1.5 h-9 text-xs font-medium rounded-[6px] bg-[#f26d6d]/[0.12] text-[#f26d6d] border border-[#f26d6d]/25 hover:bg-[#f26d6d]/[0.2] transition-colors cursor-pointer"
+                                            >
+                                                <HiOutlineTrash size={14} />
+                                                Delete
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                ))}
+
+                            </div>
+                        )}
+
+                        {/* pagination */}
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-6 border-t border-white/[0.06]">
+
+                            <p className="text-[13px] text-[#5b606c]">
+                                Showing{" "}
+                                <span className="text-white font-medium">{filteredProjects.length ? firstIndex + 1 : 0}</span>{" "}
+                                to{" "}
+                                <span className="text-white font-medium">{Math.min(lastIndex, filteredProjects.length)}</span>{" "}
+                                of{" "}
+                                <span className="text-white font-medium">{filteredProjects.length}</span>{" "}
+                                projects
+                            </p>
+
+                            <div className="flex items-center gap-2">
+
+                                <button
+                                    type="button"
+                                    onClick={() => setCurrentPage(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="w-9 h-9 flex items-center justify-center rounded-[8px] border border-white/10 text-[#5b606c] disabled:cursor-not-allowed hover:bg-white/[0.04] cursor-pointer"
+                                >
+                                    &#10094;
+                                </button>
+
+                                {Array.from({ length: totalPages }, (_, index) => (
+                                    <button
+                                        key={index}
+                                        type="button"
+                                        onClick={() => setCurrentPage(index + 1)}
+                                        className={`w-9 h-9 rounded-[8px] text-[13px] font-medium cursor-pointer transition-colors
+                                            ${currentPage === index + 1
+                                                ? "bg-[#f0a83b] text-[#0d0f14]"
+                                                : "border border-white/10 text-[#5b606c] hover:bg-white/[0.04]"
+                                            }`}
                                     >
-
-                                        <td className="py-3.5">
-
-                                            <div className="flex items-center gap-2.5">
-
-                                                <span className="flex items-center justify-center w-8 h-8 rounded-[7px] bg-[#f0a83b]/[0.12] text-[#f0a83b] text-[11.5px] font-semibold shrink-0">
-                                                    IS
-                                                </span>
-
-                                                <div>
-                                                    <p className="text-[14px] font-medium text-white">
-                                                        Inventory Sync
-                                                    </p>
-
-                                                    <p className="text-[12px] text-[#5b606c] mt-0.5">
-                                                        Warehouse stock automation
-                                                    </p>
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] text-[#a8abb8]">
-                                            Arjun Dev
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] text-[#a8abb8]">
-                                            4
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] font-medium text-[#f0a83b]">
-                                            9
-                                        </td>
-
-                                        <td className="py-3.5">
-
-                                            <span className="inline-flex px-2.5 py-1 text-[12px] font-medium rounded-[5px] bg-[#4ade80]/[0.12] text-[#4ade80] border border-[#4ade80]/25">
-                                                Active
-                                            </span>
-
-                                        </td>
-
-                                        <td className="py-3.5 text-[13px] text-[#5b606c]">
-                                            5 hrs ago
-                                        </td>
-
-                                    </tr>
-
-                                    <tr
-                                        onClick={() =>
-                                            navigate("/admin/projects/3")
-                                        }
-                                        className="border-b border-white/[0.04] cursor-pointer hover:bg-white/[0.02]"
-                                    >
-
-                                        <td className="py-3.5">
-
-                                            <div className="flex items-center gap-2.5">
-
-                                                <span className="flex items-center justify-center w-8 h-8 rounded-[7px] bg-[#f0a83b]/[0.12] text-[#f0a83b] text-[11.5px] font-semibold shrink-0">
-                                                    MA
-                                                </span>
-
-                                                <div>
-                                                    <p className="text-[14px] font-medium text-white">
-                                                        Mobile App v2
-                                                    </p>
-
-                                                    <p className="text-[12px] text-[#5b606c] mt-0.5">
-                                                        iOS & Android client rebuild
-                                                    </p>
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] text-[#a8abb8]">
-                                            Meera Nair
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] text-[#a8abb8]">
-                                            8
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] font-medium text-[#f0a83b]">
-                                            41
-                                        </td>
-
-                                        <td className="py-3.5">
-
-                                            <span className="inline-flex px-2.5 py-1 text-[12px] font-medium rounded-[5px] bg-[#4ade80]/[0.12] text-[#4ade80] border border-[#4ade80]/25">
-                                                Active
-                                            </span>
-
-                                        </td>
-
-                                        <td className="py-3.5 text-[13px] text-[#5b606c]">
-                                            1 day ago
-                                        </td>
-
-                                    </tr>
-
-                                    <tr
-                                        onClick={() =>
-                                            navigate("/admin/projects/4")
-                                        }
-                                        className="border-b border-white/[0.04] cursor-pointer hover:bg-white/[0.02]"
-                                    >
-
-                                        <td className="py-3.5">
-
-                                            <div className="flex items-center gap-2.5">
-
-                                                <span className="flex items-center justify-center w-8 h-8 rounded-[7px] bg-[#f0a83b]/[0.12] text-[#f0a83b] text-[11.5px] font-semibold shrink-0">
-                                                    CP
-                                                </span>
-
-                                                <div>
-                                                    <p className="text-[14px] font-medium text-white">
-                                                        Client Portal
-                                                    </p>
-
-                                                    <p className="text-[12px] text-[#5b606c] mt-0.5">
-                                                        Customer self-service dashboard
-                                                    </p>
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] text-[#a8abb8]">
-                                            Sana Rahman
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] text-[#a8abb8]">
-                                            3
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] font-medium text-[#f0a83b]">
-                                            6
-                                        </td>
-
-                                        <td className="py-3.5">
-
-                                            <span className="inline-flex px-2.5 py-1 text-[12px] font-medium rounded-[5px] bg-white/[0.05] text-[#8b909c] border border-white/10">
-                                                On Hold
-                                            </span>
-
-                                        </td>
-
-                                        <td className="py-3.5 text-[13px] text-[#5b606c]">
-                                            3 days ago
-                                        </td>
-
-                                    </tr>
-
-                                    <tr
-                                        onClick={() =>
-                                            navigate("/admin/projects/5")
-                                        }
-                                        className="border-b border-white/[0.04] cursor-pointer hover:bg-white/[0.02]"
-                                    >
-
-                                        <td className="py-3.5">
-
-                                            <div className="flex items-center gap-2.5">
-
-                                                <span className="flex items-center justify-center w-8 h-8 rounded-[7px] bg-[#f0a83b]/[0.12] text-[#f0a83b] text-[11.5px] font-semibold shrink-0">
-                                                    NS
-                                                </span>
-
-                                                <div>
-                                                    <p className="text-[14px] font-medium text-white">
-                                                        Notification Service
-                                                    </p>
-
-                                                    <p className="text-[12px] text-[#5b606c] mt-0.5">
-                                                        Push, email & SMS delivery
-                                                    </p>
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] text-[#a8abb8]">
-                                            Fahad K.
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] text-[#a8abb8]">
-                                            5
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] font-medium text-[#f0a83b]">
-                                            17
-                                        </td>
-
-                                        <td className="py-3.5">
-
-                                            <span className="inline-flex px-2.5 py-1 text-[12px] font-medium rounded-[5px] bg-[#4ade80]/[0.12] text-[#4ade80] border border-[#4ade80]/25">
-                                                Active
-                                            </span>
-
-                                        </td>
-
-                                        <td className="py-3.5 text-[13px] text-[#5b606c]">
-                                            6 hrs ago
-                                        </td>
-
-                                    </tr>
-
-                                    <tr
-                                        onClick={() =>
-                                            navigate("/admin/projects/6")
-                                        }
-                                        className="border-b border-white/[0.04] cursor-pointer hover:bg-white/[0.02]"
-                                    >
-
-                                        <td className="py-3.5">
-
-                                            <div className="flex items-center gap-2.5">
-
-                                                <span className="flex items-center justify-center w-8 h-8 rounded-[7px] bg-[#f0a83b]/[0.12] text-[#f0a83b] text-[11.5px] font-semibold shrink-0">
-                                                    IA
-                                                </span>
-
-                                                <div>
-                                                    <p className="text-[14px] font-medium text-white">
-                                                        Internal Admin Tools
-                                                    </p>
-
-                                                    <p className="text-[12px] text-[#5b606c] mt-0.5">
-                                                        Support & ops tooling
-                                                    </p>
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] text-[#a8abb8]">
-                                            Devika Rao
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] text-[#a8abb8]">
-                                            2
-                                        </td>
-
-                                        <td className="py-3.5 text-[13.5px] font-medium text-[#f0a83b]">
-                                            3
-                                        </td>
-
-                                        <td className="py-3.5">
-
-                                            <span className="inline-flex px-2.5 py-1 text-[12px] font-medium rounded-[5px] bg-white/[0.05] text-[#8b909c] border border-white/10">
-                                                On Hold
-                                            </span>
-
-                                        </td>
-
-                                        <td className="py-3.5 text-[13px] text-[#5b606c]">
-                                            4 days ago
-                                        </td>
-
-                                    </tr>
-
-                                </tbody>
-
-                            </table>
+                                        {index + 1}
+                                    </button>
+                                ))}
+
+                                <button
+                                    type="button"
+                                    onClick={() => setCurrentPage(currentPage + 1)}
+                                    disabled={currentPage === totalPages || totalPages === 0}
+                                    className="w-9 h-9 flex items-center justify-center rounded-[8px] border border-white/10 text-[#5b606c] disabled:cursor-not-allowed hover:bg-white/[0.04] cursor-pointer"
+                                >
+                                    &#10095;
+                                </button>
+
+                            </div>
 
                         </div>
 
@@ -635,6 +316,56 @@ function AdminProjects() {
                 </div>
 
             </div>
+
+            {/* Add Project Modal */}
+            {showAddModal && (
+                <AddProjectModal
+                    onClose={() => setShowAddModal(false)}
+                    getProjects={getProjects}
+                />
+            )}
+
+            {/* Edit Project Modal */}
+            {showEditModal && (
+                <EditProjectModal
+                    project={selectedProject}
+                    onClose={() => {
+                        setShowEditModal(false)
+                        setSelectedProject(null)
+                    }}
+                    getProjects={getProjects}
+                />
+            )}
+
+            {/* Delete Confirmation Popup */}
+            {confirmDeleteId && (
+                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999] px-4">
+                    <div className="bg-[#161922] border border-white/[0.08] rounded-[16px] shadow-lg w-full max-w-[360px] p-6">
+                        <h3 className="text-lg font-semibold text-white mb-2">
+                            Delete project?
+                        </h3>
+                        <p className="text-sm text-[#a8abb8] mb-6">
+                            Are you sure you want to delete this project? This action cannot be undone.
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setConfirmDeleteId(null)}
+                                className="px-4 py-2 text-sm font-medium text-[#a8abb8] border border-white/10 rounded-[8px] hover:bg-white/[0.04] transition-colors cursor-pointer"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => handleDelete(confirmDeleteId)}
+                                className="px-4 py-2 text-sm font-medium text-white bg-[#f26d6d] rounded-[8px] hover:bg-[#e85555] transition-colors cursor-pointer"
+                            >
+                                Yes, delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
         </div>
     );

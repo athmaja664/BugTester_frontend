@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FaBug } from "react-icons/fa6";
 import { MdSpaceDashboard } from "react-icons/md";
 import {
@@ -14,6 +14,36 @@ import { CgProfile } from "react-icons/cg";
 
 function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
+
+  //logged-in admin details from localStorage
+  const storedUser = localStorage.getItem('user')
+  let adminUser = {}
+  if (storedUser) {
+    adminUser = JSON.parse(storedUser)
+  }
+
+  const adminName = adminUser.name || "Admin User"
+  const adminEmail = adminUser.email || "admin@bugtester.com"
+
+  //builds initials from the admin's name for the avatar circle
+  const getInitials = (name) => {
+    if (!name) {
+      return "AD"
+    }
+    const parts = name.trim().split(" ")
+    if (parts.length === 1) {
+      return parts[0].substring(0, 2).toUpperCase()
+    }
+    return (parts[0][0] + parts[1][0]).toUpperCase()
+  }
+
+const handleLogout = () => {
+    setMobileOpen(false)
+    navigate('/')
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+}
 
   return (
     <>
@@ -169,16 +199,16 @@ function Sidebar() {
           <div className="flex items-center gap-3 px-2 mb-3">
 
             <span className="flex items-center justify-center w-9 h-9 rounded-full bg-white/[0.06] text-[#c7c9d1] text-[13px] font-semibold">
-              AD
+              {getInitials(adminName)}
             </span>
 
             <div>
               <p className="text-[13.5px] font-medium text-white">
-                Admin User
+                {adminName}
               </p>
 
               <p className="text-[12px] text-[#5b606c]">
-                admin@bugtester.com
+                {adminEmail}
               </p>
             </div>
 
@@ -187,6 +217,7 @@ function Sidebar() {
           {/* Logout */}
           <button
             type="button"
+            onClick={handleLogout}
             className="flex items-center gap-3 w-full px-3 h-[42px] rounded-[8px] text-[14px] font-medium text-[#a8abb8] hover:bg-white/[0.04] hover:text-white transition-colors cursor-pointer"
           >
             <HiOutlineLogout size={18} />

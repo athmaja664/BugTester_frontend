@@ -3,12 +3,46 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaBug } from "react-icons/fa6";
 import { HiOutlineMail, HiOutlineLockClosed } from "react-icons/hi";
+import toast, { Toaster } from "react-hot-toast";
+import {loginAPI } from "../../../../services/allAPI";
 
 function Login() {
     const navigate = useNavigate();
-  // UI-only state — kept purely for the show/hide password interaction.
-  // No API calls, no auth, no navigation wired in.
   const [showPassword, setShowPassword] = useState(false);
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!loginData.email || !loginData.password) {
+      toast.error("Please fill the form");
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await loginAPI(loginData);
+      if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        toast.success("Login successful");
+
+        const role = response.data.user.role;
+        setTimeout(() => {
+          if (role === "Administrator") navigate("/admindashboard");
+          else if (role === "Lead") navigate("/leaddashboard");
+          else if (role === "Developer") navigate("/developerdashboard");
+          else if (role === "Tester") navigate("/tester/dashboard");
+          else navigate("/");
+        }, 800);
+      } else {
+        toast.error(response.data.message || "Invalid email or password");
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.response?.data?.message || "Something went wrong");
+      setLoading(false);
+    }
+  };
 
   return (
     <div
@@ -18,6 +52,8 @@ function Login() {
           "radial-gradient(ellipse 900px 600px at 15% 10%, rgba(240,168,59,0.10), transparent 60%), radial-gradient(ellipse 900px 700px at 85% 90%, rgba(87,106,255,0.14), transparent 60%), #0d0f14",
       }}
     >
+      <Toaster position="top-center" />
+
       {/* ambient grid texture */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
@@ -130,6 +166,8 @@ function Login() {
                     name="email"
                     placeholder="you@company.com"
                     autoComplete="username"
+                    value={loginData.email}
+                    onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                   />
                 </div>
               </div>
@@ -149,6 +187,8 @@ function Login() {
                     name="password"
                     placeholder="Enter password"
                     autoComplete="current-password"
+                    value={loginData.password}
+                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                   />
                   <span
                     className="text-[#6a6f7b] ml-2 cursor-pointer hover:text-[#a8abb8]"
@@ -163,51 +203,14 @@ function Login() {
 
               <button
                 type="button"
-                className="flex items-center justify-center self-stretch w-full max-w-[493px] h-[62px] mt-[33px] p-[10px] text-lg font-bold text-[#0d0f14] bg-[#f0a83b] border-none rounded-[3px] cursor-pointer transition-colors hover:bg-[#f5bc6b] active:scale-[0.995] max-[400px]:h-[54px] max-[400px]:text-base"
+                onClick={handleLogin}
+                disabled={loading}
+                className="flex items-center justify-center self-stretch w-full max-w-[493px] h-[62px] mt-[33px] p-[10px] text-lg font-bold text-[#0d0f14] bg-[#f0a83b] border-none rounded-[3px] cursor-pointer transition-colors hover:bg-[#f5bc6b] active:scale-[0.995] disabled:opacity-70 disabled:cursor-not-allowed max-[400px]:h-[54px] max-[400px]:text-base"
               >
-                Sign in
+                {loading ? "Signing in..." : "Sign in"}
               </button>
  
-{/* Role navigation - UI prototype only */}
-<div className="flex flex-col items-center self-stretch w-full mt-5">
-  <p className="mb-3 text-xs text-[#6a6f7b]">
-    Preview dashboard as:
-  </p>
 
-  <div className="flex items-center justify-center gap-2 w-full">
-    <button
-      type="button"
-      onClick={() => navigate("/admindashboard")}
-      className="flex-1 h-9 px-2 rounded-[4px] border border-white/10 bg-white/[0.03] text-xs font-medium text-[#a8abb8] hover:border-[#f0a83b] hover:text-[#f0a83b] transition-colors"
-    >
-      Admin
-    </button>
-
-    <button
-      type="button"
-      onClick={() => navigate("/leaddashboard")}
-      className="flex-1 h-9 px-2 rounded-[4px] border border-white/10 bg-white/[0.03] text-xs font-medium text-[#a8abb8] hover:border-[#f0a83b] hover:text-[#f0a83b] transition-colors"
-    >
-      Lead
-    </button>
-
-    <button
-      type="button"
-      onClick={() => navigate("/developerdashboard")}
-      className="flex-1 h-9 px-2 rounded-[4px] border border-white/10 bg-white/[0.03] text-xs font-medium text-[#a8abb8] hover:border-[#f0a83b] hover:text-[#f0a83b] transition-colors"
-    >
-      Developer
-    </button>
-
-    <button
-      type="button"
-      onClick={() => navigate("/tester/dashboard")}
-      className="flex-1 h-9 px-2 rounded-[4px] border border-white/10 bg-white/[0.03] text-xs font-medium text-[#a8abb8] hover:border-[#f0a83b] hover:text-[#f0a83b] transition-colors"
-    >
-      Tester
-    </button>
-  </div>
-</div>
 
 
              
