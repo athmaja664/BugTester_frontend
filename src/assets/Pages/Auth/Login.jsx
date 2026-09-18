@@ -7,7 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import {loginAPI } from "../../../../services/allAPI";
 
 function Login() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -164,7 +164,7 @@ function Login() {
                     type="text"
                     id="email"
                     name="email"
-                    placeholder="you@company.com"
+                    placeholder="Enter Email"
                     autoComplete="username"
                     value={loginData.email}
                     onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
@@ -209,11 +209,6 @@ function Login() {
               >
                 {loading ? "Signing in..." : "Sign in"}
               </button>
- 
-
-
-
-             
             </section>
 
           </div>

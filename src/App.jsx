@@ -24,6 +24,11 @@ import TesterProjects from './assets/Pages/Testers/TesterProjects';
 import TesterBugs from './assets/Pages/Testers/TesterBugs';
 import TesterTasks from './assets/Pages/Testers/TesterTasks';
 import TesterProfile from './assets/Pages/Testers/TesterProfile';
+//SuperAdmin
+import SuperAdminLogin from './assets/Pages/SuperAdmin/SuperAdminLogin';
+import SuperAdminDashboard from './assets/Pages/SuperAdmin/SuperAdminDashboard';
+import SuperAdminOrgDetail from './assets/Pages/SuperAdmin/SuperAdminOrgDetails';
+import SuperAdminBilling from './assets/Pages/SuperAdmin/SuperAdminBilling';
 
 function App() {
   return (
@@ -36,6 +41,11 @@ function App() {
       <Route path="/adminbugs" element={<AdminBugs />} />
       <Route path="/adminprofile" element={<AdminProfile />} />
       <Route path="/leaddashboard" element={<LeadDashboard />} />
+      {/* SuperAdmin */}
+      <Route path="/superadmin/login" element={<SuperAdminLogin/>}/>
+      <Route path="/superadmin/dashboard" element={<SuperAdminDashboard/>}/>
+      <Route path="/superadmin/orgdetails" element={<SuperAdminOrgDetail/>}/>
+      <Route path="/superadmin/billing" element={<SuperAdminBilling/>}/>
       {/* Lead-Side */}
       <Route path="/leadbugs" element={<LeadBugs />} />
       <Route path="/leadprojects" element={<LeadProjects />} />
