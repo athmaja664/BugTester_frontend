@@ -34,7 +34,7 @@ function App() {
   return (
     <Routes>
       {/* Admin-Side */}
-      <Route path="/" element={<Login />} />
+      <Route path="/admin/login" element={<Login />} />
       <Route path="/admindashboard" element={<AdminDashboard />} />
       <Route path="/adminusers" element={<AdminUsers />} />
       <Route path="/adminprojects" element={<AdminProjects />} />
@@ -42,7 +42,7 @@ function App() {
       <Route path="/adminprofile" element={<AdminProfile />} />
       <Route path="/leaddashboard" element={<LeadDashboard />} />
       {/* SuperAdmin */}
-      <Route path="/superadmin/login" element={<SuperAdminLogin/>}/>
+      <Route path="/" element={<SuperAdminLogin/>}/>
       <Route path="/superadmin/dashboard" element={<SuperAdminDashboard/>}/>
       <Route path="/superadmin/orgdetails" element={<SuperAdminOrgDetail/>}/>
       <Route path="/superadmin/billing" element={<SuperAdminBilling/>}/>
