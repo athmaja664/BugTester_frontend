@@ -127,3 +127,15 @@ export const updateBugAPI = async (id, reqBody, reqHeader) => {
 export const deleteBugAPI = async (id, reqHeader) => {
   return await commonAPI('DELETE', `${serverURL}/api/bugs/${id}`, {}, reqHeader)
 }
+
+
+//SUPERADMIN
+//SUPERADMIN-LOGIN
+export const superAdminloginAPI=async(reqBody)=>{
+  return await commonAPI('POST',`${serverURL}/api/superadmin/login`,reqBody,{})
+}
+
+//SUPERADMIN-CREATE ORGANIZATION
+export const createOrganizationAPI=async(reqBody,reqHeader)=>{
+  return await commonAPI('POST',`${serverURL}/api/superadmin/organization`,reqBody,reqHeader)
+}

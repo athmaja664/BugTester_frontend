@@ -4,14 +4,36 @@ import { FaBug } from "react-icons/fa6";
 import { HiOutlineMail, HiOutlineLockClosed } from "react-icons/hi";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { HiOutlineShieldCheck } from "react-icons/hi2";
+import { superAdminloginAPI } from "../../../../services/allAPI";
+import toast from "react-hot-toast";
 
 function SuperAdminLogin() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
 
-  const handleLogin = () => {
-    navigate("/superadmin/dashboard");
+  const handleLogin = async () => {
+    if (!loginData.email || !loginData.password) {
+      toast.error("please fill the form");
+      return;
+    }
+    try {
+      const response = await superAdminloginAPI(loginData);
+      if (response.status === 200) {
+        localStorage.setItem("superAdminToken", response.data.token);
+        localStorage.setItem("superAdmin", JSON.stringify(response.data.superAdmin));
+        toast.success("Login Successfully");
+        setTimeout(() => {
+          navigate('/superadmin/dashboard')
+        }, 1000);
+      } else {
+        toast.error(response.data.message || 'invalid email or password');
+      }
+    }
+    catch (err) {
+      console.log(err);
+      toast.error('something went wrong');
+    }
   };
 
   return (
@@ -124,6 +146,13 @@ function SuperAdminLogin() {
         <p className="self-stretch mt-6 text-center text-xs text-[#5b606c]">
           Client team members should use the regular BugTester login instead.
         </p>
+        <button
+          type="button"
+          onClick={() => navigate('/admin/login')}
+          className="self-stretch mt-3 text-center text-xs text-[#f0a83b] hover:text-[#f5bc6b] underline underline-offset-2 bg-transparent border-none cursor-pointer"
+        >
+          Go to client login
+        </button>
       </section>
     </div>
   );

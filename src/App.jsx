@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import Login from './assets/Pages/Auth/Login'
 // Admin-side
 import AdminDashboard from "./assets/Pages/Admin/AdminDashboard";
@@ -32,6 +33,8 @@ import SuperAdminBilling from './assets/Pages/SuperAdmin/SuperAdminBilling';
 
 function App() {
   return (
+    <>
+      <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
     <Routes>
       {/* Admin-Side */}
       <Route path="/admin/login" element={<Login />} />
@@ -42,6 +45,7 @@ function App() {
       <Route path="/adminprofile" element={<AdminProfile />} />
       <Route path="/leaddashboard" element={<LeadDashboard />} />
       {/* SuperAdmin */}
+        
       <Route path="/" element={<SuperAdminLogin/>}/>
       <Route path="/superadmin/dashboard" element={<SuperAdminDashboard/>}/>
       <Route path="/superadmin/orgdetails" element={<SuperAdminOrgDetail/>}/>
@@ -64,6 +68,7 @@ function App() {
       <Route path="/tester/tasks" element={<TesterTasks />} />
       <Route path="/tester/profile" element={<TesterProfile />} />
     </Routes>
+    </>
   )
 }
 
