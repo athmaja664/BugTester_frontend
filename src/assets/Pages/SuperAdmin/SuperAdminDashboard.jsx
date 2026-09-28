@@ -49,31 +49,33 @@ function SuperAdminDashboard() {
 
         {/* page title */}
         <div className="flex items-center justify-between mb-8 max-[640px]:flex-col max-[640px]:items-start max-[640px]:gap-4">
-          <div>
-            <h1 className="text-[26px] font-semibold text-white">SuperAdmin Dashboard</h1>
-            <p className="text-sm text-[#6a6f7b] mt-1">Manage client organizations and billing</p>
-          </div>
+  <div>
+    <h1 className="text-[26px] font-semibold text-white">SuperAdmin Dashboard</h1>
+    <p className="text-sm text-[#6a6f7b] mt-1">Manage client organizations and billing</p>
+  </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/superadmin/billing")}
-              className="flex items-center gap-2 h-[46px] px-5 text-sm font-medium text-[#a8abb8] bg-white/[0.04] border border-white/10 rounded-[3px] cursor-pointer hover:text-white hover:border-white/20"
-            >
-              <HiOutlineCreditCard className="w-4 h-4" />
-              Billing
-            </button>
+  <div className="flex items-center gap-3">
+    <button
+      onClick={() => navigate("/superadmin/billing")}
+      className="flex items-center gap-2 h-[46px] px-5 text-sm font-medium text-[#a8abb8] bg-white/[0.04] border border-white/10 rounded-[3px] cursor-pointer hover:text-white hover:border-white/20"
+    >
+      <HiOutlineCreditCard className="w-4 h-4" />
+      Billing
+    </button>
 
-            <button
-              onClick={() => setShowAddOrgModal(true)}
-              className="flex items-center gap-2 h-[46px] px-5 text-sm font-bold text-[#0d0f14] bg-[#f0a83b] border-none rounded-[3px] cursor-pointer transition-colors hover:bg-[#f5bc6b]"
-            >
-              <HiOutlinePlus className="w-4 h-4" />
-              Add Organization
-            </button>
-          </div>
+    <button
+      onClick={() => setShowAddOrgModal(true)}
+      className="flex items-center gap-2 h-[46px] px-5 text-sm font-bold text-[#0d0f14] bg-[#f0a83b] border-none rounded-[3px] cursor-pointer transition-colors hover:bg-[#f5bc6b]"
+    >
+      <HiOutlinePlus className="w-4 h-4" />
+      Add Organization
+    </button>
+  </div>
+</div>
 
-          <AddOrganizationModal isOpen={showAddOrgModal} onClose={() => setShowAddOrgModal(false)} />
-        </div>
+{showAddOrgModal && (
+  <AddOrganizationModal onClose={() => setShowAddOrgModal(false)} />
+)}
 
         {/* stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">

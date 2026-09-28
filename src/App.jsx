@@ -30,44 +30,51 @@ import SuperAdminLogin from './assets/Pages/SuperAdmin/SuperAdminLogin';
 import SuperAdminDashboard from './assets/Pages/SuperAdmin/SuperAdminDashboard';
 import SuperAdminOrgDetail from './assets/Pages/SuperAdmin/SuperAdminOrgDetails';
 import SuperAdminBilling from './assets/Pages/SuperAdmin/SuperAdminBilling';
+import MyIssues from './assets/Pages/Common/MyIssues';
 
+import Sidebar from './assets/Components/Admin/Sidebar';
+import LeadSidebar from './assets/Components/Lead/LeadSidebar';
 function App() {
   return (
     <>
       <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
-    <Routes>
-      {/* Admin-Side */}
-      <Route path="/admin/login" element={<Login />} />
-      <Route path="/admindashboard" element={<AdminDashboard />} />
-      <Route path="/adminusers" element={<AdminUsers />} />
-      <Route path="/adminprojects" element={<AdminProjects />} />
-      <Route path="/adminbugs" element={<AdminBugs />} />
-      <Route path="/adminprofile" element={<AdminProfile />} />
-      <Route path="/leaddashboard" element={<LeadDashboard />} />
-      {/* SuperAdmin */}
-        
-      <Route path="/" element={<SuperAdminLogin/>}/>
-      <Route path="/superadmin/dashboard" element={<SuperAdminDashboard/>}/>
-      <Route path="/superadmin/orgdetails" element={<SuperAdminOrgDetail/>}/>
-      <Route path="/superadmin/billing" element={<SuperAdminBilling/>}/>
-      {/* Lead-Side */}
-      <Route path="/leadbugs" element={<LeadBugs />} />
-      <Route path="/leadprojects" element={<LeadProjects />} />
-      <Route path="/leadteams" element={<LeadTeams />} />
-      <Route path="/leadprofile" element={<LeadProfiles />} />
-      {/* Developer-side */}
-      <Route path="/developerdashboard" element={<DeveloperDashboard />} />
-      <Route path="/developerproject" element={<DeveloperProjects />} />
-      <Route path="/developerbugs" element={<DeveloperBugs />} />
-      <Route path="/developertasks" element={<DeveloperTasks />} />
-      <Route path="/developerprofile" element={<DeveloperProfile />} />
-      {/* Tester-Side */}
-      <Route path="/tester/dashboard" element={<TesterDashboard />} />
-      <Route path="/tester/projects" element={<TesterProjects />} />
-      <Route path="/tester/bugs" element={<TesterBugs />} />
-      <Route path="/tester/tasks" element={<TesterTasks />} />
-      <Route path="/tester/profile" element={<TesterProfile />} />
-    </Routes>
+      <Routes>
+        {/* Admin-Side */}
+        <Route path="/admin/login" element={<Login />} />
+        <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/adminusers" element={<AdminUsers />} />
+        <Route path="/adminprojects" element={<AdminProjects />} />
+        <Route path="/adminbugs" element={<AdminBugs />} />
+        <Route path="/adminprofile" element={<AdminProfile />} />
+        <Route path="/leaddashboard" element={<LeadDashboard />} />
+        {/* SuperAdmin */}
+        <Route path="/" element={<SuperAdminLogin />} />
+        <Route path="/superadmin/dashboard" element={<SuperAdminDashboard />} />
+        <Route path="/superadmin/orgdetails" element={<SuperAdminOrgDetail />} />
+        <Route path="/superadmin/billing" element={<SuperAdminBilling />} />
+        {/* Lead-Side */}
+        <Route path="/leadbugs" element={<LeadBugs />} />
+        <Route path="/leadprojects" element={<LeadProjects />} />
+        <Route path="/leadteams" element={<LeadTeams />} />
+        <Route path="/leadprofile" element={<LeadProfiles />} />
+        {/* Developer-side */}
+        <Route path="/developerdashboard" element={<DeveloperDashboard />} />
+        <Route path="/developerproject" element={<DeveloperProjects />} />
+        <Route path="/developerbugs" element={<DeveloperBugs />} />
+        <Route path="/developertasks" element={<DeveloperTasks />} />
+        <Route path="/developerprofile" element={<DeveloperProfile />} />
+        {/* Tester-Side */}
+        <Route path="/tester/dashboard" element={<TesterDashboard />} />
+        <Route path="/tester/projects" element={<TesterProjects />} />
+        <Route path="/tester/bugs" element={<TesterBugs />} />
+        <Route path="/tester/tasks" element={<TesterTasks />} />
+        <Route path="/tester/profile" element={<TesterProfile />} />
+        {/* Common */}
+        <Route path="/common/issues" element={<MyIssues />} />
+
+       
+        <Route path="/leadmyissues" element={<MyIssues SidebarComponent={LeadSidebar} />} />
+      </Routes>
     </>
   )
 }

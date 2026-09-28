@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineClose } from "react-icons/ai";
+import { HiOutlinePaperClip } from "react-icons/hi";
 import toast from "react-hot-toast";
-import { updateBugAPI, getProjectByIdAPI } from "../../../../services/allAPI";
+import AssigneeDropdown from "../Common/AssigneeDropdown";
+import { updateBugAPI, getProjectByIdAPI, getSingleBugAPI } from "../../../../services/allAPI";
 
 const allStatuses = ["New", "Assigned", "In Progress", "Resolved", "Ready for QA", "Retest", "Verified", "Closed"]
+const allTags = ["Bug", "Enhancement", "Feature"]
 
 function LeadEditBugModal({ bug, onClose, getBugs }) {
     const [bugData, setBugData] = useState({
@@ -11,9 +14,14 @@ function LeadEditBugModal({ bug, onClose, getBugs }) {
         description: bug.description || "",
         status: bug.status || "New",
         priority: bug.priority || "Medium",
-        assigned_to: bug.assigned_to || ""
+        tag: bug.tag || "Bug",
+        // start with everyone already assigned to this bug
+        assignedTo: bug.assignees && bug.assignees.length > 0
+            ? bug.assignees.map((a) => a.id)
+            : (bug.assigned_to ? [bug.assigned_to] : [])
     })
     const [developers, setDevelopers] = useState([])
+    const [attachments, setAttachments] = useState([])
     const [loading, setLoading] = useState(false)
     const token = localStorage.getItem('token')
 
@@ -30,13 +38,46 @@ function LeadEditBugModal({ bug, onClose, getBugs }) {
         }
     }
 
+    // the single-bug endpoint returns the attachment list
+    const getAttachments = async () => {
+        try {
+            const reqHeader = { Authorization: `Bearer ${token}` }
+            const response = await getSingleBugAPI(bug.id, reqHeader)
+            if (response.status === 200) {
+                setAttachments(response.data.attachments || [])
+            }
+        } catch (err) {
+            toast.error('Failed to load attachments')
+        }
+    }
+
     useEffect(() => {
         getProjectDevelopers()
+        getAttachments()
     }, [])
+
+    // keeps people who are already assigned in the list, so saving never removes them by accident
+    const assigneeOptions = [
+        ...developers,
+        ...(bug.assignees || []).filter((a) => !developers.some((d) => d.id === a.id))
+    ]
 
     const handleChange = (e) => {
         const { name, value } = e.target
         setBugData((prev) => ({ ...prev, [name]: value }))
+    }
+
+    const handleTagSelect = (tag) => {
+        setBugData((prev) => ({ ...prev, tag }))
+    }
+
+    const handleAssigneeToggle = (devId) => {
+        setBugData((prev) => ({
+            ...prev,
+            assignedTo: prev.assignedTo.includes(devId)
+                ? prev.assignedTo.filter((id) => id !== devId)
+                : [...prev.assignedTo, devId]
+        }))
     }
 
     const handleSubmit = async () => {
@@ -54,7 +95,8 @@ function LeadEditBugModal({ bug, onClose, getBugs }) {
                 description: bugData.description,
                 status: bugData.status,
                 priority: bugData.priority,
-                assigned_to: bugData.assigned_to ? Number(bugData.assigned_to) : null
+                tag: bugData.tag,
+                assignedTo: bugData.assignedTo
             }
 
             const response = await updateBugAPI(bug.id, reqBody, reqHeader)
@@ -75,9 +117,10 @@ function LeadEditBugModal({ bug, onClose, getBugs }) {
 
     return (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999] px-4">
-            <div className="bg-[#161922] border border-white/[0.08] rounded-[16px] shadow-lg w-full max-w-[440px] p-6">
+            <div className="bg-[#161922] border border-white/[0.08] rounded-[16px] shadow-lg w-full max-w-[720px] max-h-[90vh] overflow-y-auto">
 
-                <div className="flex items-center justify-between mb-6">
+                {/* header */}
+                <div className="flex items-center justify-between px-7 pt-7 pb-5 border-b border-white/[0.06]">
                     <h3 className="text-lg font-semibold text-white">
                         Edit Bug — BUG-{bug.id}
                     </h3>
@@ -90,42 +133,70 @@ function LeadEditBugModal({ bug, onClose, getBugs }) {
                     </button>
                 </div>
 
-                <div className="flex flex-col gap-4">
+                {/* two-column form */}
+                <div className="px-7 py-6 grid grid-cols-2 gap-8 max-[560px]:grid-cols-1">
 
-                    <div className="flex flex-col gap-2">
-                        <label className="text-[12.5px] font-medium text-[#a8abb8]">
-                            Bug Title
-                        </label>
-                        <input
-                            type="text"
-                            name="title"
-                            value={bugData.title}
-                            onChange={handleChange}
-                            placeholder="e.g. Login button not responding on Safari"
-                            className="h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
-                        />
+                    {/* LEFT column */}
+                    <div className="flex flex-col gap-5">
+                        <p className="text-xs font-semibold text-[#f0a83b] uppercase tracking-wide">
+                            Bug Details
+                        </p>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[12.5px] font-medium text-[#a8abb8]">Bug Title</label>
+                            <input
+                                type="text"
+                                name="title"
+                                value={bugData.title}
+                                onChange={handleChange}
+                                placeholder="e.g. Login button not responding on Safari"
+                                className="h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[12.5px] font-medium text-[#a8abb8]">Description</label>
+                            <textarea
+                                name="description"
+                                value={bugData.description}
+                                onChange={handleChange}
+                                placeholder="Steps to reproduce, expected vs actual behavior..."
+                                rows={4}
+                                className="px-3.5 py-2.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors resize-none"
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[12.5px] font-medium text-[#a8abb8]">Attachments</label>
+                            {attachments.length === 0 ? (
+                                <p className="text-[12.5px] text-[#5b606c]">No attachments</p>
+                            ) : (
+                                <div className="flex flex-col gap-1.5">
+                                    {attachments.map((file) => (
+                                        <a
+                                            key={file.id}
+                                            href={file.file_url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="flex items-center gap-2 px-3 py-1.5 rounded-[6px] bg-white/[0.03] border border-white/10 text-[12.5px] text-white hover:border-[#f0a83b] transition-colors"
+                                        >
+                                            <HiOutlinePaperClip size={14} className="text-[#f0a83b] shrink-0" />
+                                            <span className="truncate">{file.file_name}</span>
+                                        </a>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                        <label className="text-[12.5px] font-medium text-[#a8abb8]">
-                            Description
-                        </label>
-                        <textarea
-                            name="description"
-                            value={bugData.description}
-                            onChange={handleChange}
-                            placeholder="Steps to reproduce, expected vs actual behavior..."
-                            rows={3}
-                            className="px-3.5 py-2.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors resize-none"
-                        />
-                    </div>
+                    {/* RIGHT column */}
+                    <div className="flex flex-col gap-5">
+                        <p className="text-xs font-semibold text-[#f0a83b] uppercase tracking-wide">
+                            Classification
+                        </p>
 
-                    <div className="flex gap-4">
-
-                        <div className="flex flex-col gap-2 flex-1">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
-                                Status
-                            </label>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[12.5px] font-medium text-[#a8abb8]">Status</label>
                             <select
                                 name="status"
                                 value={bugData.status}
@@ -138,10 +209,8 @@ function LeadEditBugModal({ bug, onClose, getBugs }) {
                             </select>
                         </div>
 
-                        <div className="flex flex-col gap-2 flex-1">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
-                                Priority
-                            </label>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[12.5px] font-medium text-[#a8abb8]">Priority</label>
                             <select
                                 name="priority"
                                 value={bugData.priority}
@@ -155,38 +224,40 @@ function LeadEditBugModal({ bug, onClose, getBugs }) {
                             </select>
                         </div>
 
-                    </div>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[12.5px] font-medium text-[#a8abb8]">Tag</label>
+                            <div className="flex gap-2 flex-wrap">
+                                {allTags.map((tag) => (
+                                    <button
+                                        type="button"
+                                        key={tag}
+                                        onClick={() => handleTagSelect(tag)}
+                                        className={bugData.tag === tag
+                                            ? "px-3 py-1.5 rounded-[6px] text-[12.5px] font-medium border cursor-pointer transition-colors bg-[#f0a83b]/[0.15] text-[#f0a83b] border-[#f0a83b]/40"
+                                            : "px-3 py-1.5 rounded-[6px] text-[12.5px] font-medium border cursor-pointer transition-colors bg-white/[0.03] text-[#a8abb8] border-white/10 hover:border-white/20"
+                                        }
+                                    >
+                                        {tag}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
-                    <div className="flex flex-col gap-2">
-                        <label className="text-[12.5px] font-medium text-[#a8abb8]">
-                            Assign To
-                        </label>
-                        <select
-                            name="assigned_to"
-                            value={bugData.assigned_to}
-                            onChange={handleChange}
-                            className="w-full h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-left text-white cursor-pointer outline-none focus:border-[#f0a83b]"
-                        >
-                            <option className="bg-[#161922]" value="">Unassigned</option>
-                            {developers.length === 0 ? (
-                                <option className="bg-[#161922]" disabled>No developers on this project</option>
-                            ) : (
-                                developers.map((d) => (
-                                    <option className="bg-[#161922]" key={d.id} value={d.id}>
-                                        {d.name}
-                                    </option>
-                                ))
-                            )}
-                        </select>
+                        <AssigneeDropdown
+                            options={assigneeOptions}
+                            selected={bugData.assignedTo}
+                            onToggle={handleAssigneeToggle}
+                        />
                     </div>
 
                 </div>
 
-                <div className="flex justify-end gap-3 mt-6">
+                {/* footer */}
+                <div className="flex items-center justify-center gap-3 px-7 py-5 border-t border-white/[0.06]">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-[#a8abb8] border border-white/10 rounded-[8px] hover:bg-white/[0.04] transition-colors cursor-pointer"
+                        className="h-[44px] px-5 text-sm font-medium text-[#a8abb8] hover:text-white"
                     >
                         Cancel
                     </button>
@@ -194,7 +265,7 @@ function LeadEditBugModal({ bug, onClose, getBugs }) {
                         type="button"
                         onClick={handleSubmit}
                         disabled={loading}
-                        className="px-4 py-2 text-sm font-semibold text-[#0d0f14] bg-[#f0a83b] rounded-[8px] hover:bg-[#f5bc6b] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="h-[44px] px-6 text-sm font-bold text-[#0d0f14] bg-[#f0a83b] rounded-[3px] hover:bg-[#f5bc6b] disabled:opacity-60"
                     >
                         {loading ? 'Saving...' : 'Save Changes'}
                     </button>

@@ -8,7 +8,7 @@ import {
 import { MdSpaceDashboard } from "react-icons/md";
 import { AiOutlineProject } from "react-icons/ai";
 import { BsBug } from "react-icons/bs";
-import { HiOutlineUsers } from "react-icons/hi";
+import { HiOutlineUsers, HiOutlineClipboardList } from "react-icons/hi";
 import { FiBarChart2, FiBell } from "react-icons/fi";
 import { CgProfile } from "react-icons/cg";
 
@@ -86,10 +86,9 @@ function LeadSidebar() {
             to="/leaddashboard"
             onClick={() => setMobileOpen(false)}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 h-[42px] rounded-[8px] text-[14px] font-medium mb-1 transition-colors ${
-                isActive
-                  ? "bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25"
-                  : "text-[#a8abb8] border border-transparent hover:bg-white/[0.04] hover:text-white"
+              `flex items-center gap-3 px-3 h-[42px] rounded-[8px] text-[14px] font-medium mb-1 transition-colors ${isActive
+                ? "bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25"
+                : "text-[#a8abb8] border border-transparent hover:bg-white/[0.04] hover:text-white"
               }`
             }
           >
@@ -102,10 +101,9 @@ function LeadSidebar() {
             to="/leadprojects"
             onClick={() => setMobileOpen(false)}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 h-[42px] rounded-[8px] text-[14px] font-medium mb-1 transition-colors ${
-                isActive
-                  ? "bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25"
-                  : "text-[#a8abb8] border border-transparent hover:bg-white/[0.04] hover:text-white"
+              `flex items-center gap-3 px-3 h-[42px] rounded-[8px] text-[14px] font-medium mb-1 transition-colors ${isActive
+                ? "bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25"
+                : "text-[#a8abb8] border border-transparent hover:bg-white/[0.04] hover:text-white"
               }`
             }
           >
@@ -118,10 +116,9 @@ function LeadSidebar() {
             to="/leadbugs"
             onClick={() => setMobileOpen(false)}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 h-[42px] rounded-[8px] text-[14px] font-medium mb-1 transition-colors ${
-                isActive
-                  ? "bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25"
-                  : "text-[#a8abb8] border border-transparent hover:bg-white/[0.04] hover:text-white"
+              `flex items-center gap-3 px-3 h-[42px] rounded-[8px] text-[14px] font-medium mb-1 transition-colors ${isActive
+                ? "bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25"
+                : "text-[#a8abb8] border border-transparent hover:bg-white/[0.04] hover:text-white"
               }`
             }
           >
@@ -134,10 +131,9 @@ function LeadSidebar() {
             to="/leadteams"
             onClick={() => setMobileOpen(false)}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 h-[42px] rounded-[8px] text-[14px] font-medium mb-1 transition-colors ${
-                isActive
-                  ? "bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25"
-                  : "text-[#a8abb8] border border-transparent hover:bg-white/[0.04] hover:text-white"
+              `flex items-center gap-3 px-3 h-[42px] rounded-[8px] text-[14px] font-medium mb-1 transition-colors ${isActive
+                ? "bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25"
+                : "text-[#a8abb8] border border-transparent hover:bg-white/[0.04] hover:text-white"
               }`
             }
           >
@@ -145,21 +141,35 @@ function LeadSidebar() {
             Team
           </NavLink>
 
-           <div className="my-4 border-t border-white/[0.06]" />
+          <div className="my-4 border-t border-white/[0.06]" />
           {/* Profile */}
           <NavLink
             to="/leadprofile"
             onClick={() => setMobileOpen(false)}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 h-[42px] rounded-[8px] text-[14px] font-medium mb-1 transition-colors ${
-                isActive
-                  ? "bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25"
-                  : "text-[#a8abb8] border border-transparent hover:bg-white/[0.04] hover:text-white"
+              `flex items-center gap-3 px-3 h-[42px] rounded-[8px] text-[14px] font-medium mb-1 transition-colors ${isActive
+                ? "bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25"
+                : "text-[#a8abb8] border border-transparent hover:bg-white/[0.04] hover:text-white"
               }`
             }
           >
             <CgProfile size={18} />
             Profile
+          </NavLink>
+
+          {/* My Issues */}
+          <NavLink
+            to="/leadmyissues"
+            onClick={() => setMobileOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 h-[42px] rounded-[8px] text-[14px] font-medium mb-1 transition-colors ${isActive
+                ? "bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25"
+                : "text-[#a8abb8] border border-transparent hover:bg-white/[0.04] hover:text-white"
+              }`
+            }
+          >
+            <HiOutlineClipboardList size={18} />
+            My Issues
           </NavLink>
 
         </nav>
@@ -182,7 +192,7 @@ function LeadSidebar() {
                 Lead
               </p>
             </div>
-            
+
 
           </div>
 

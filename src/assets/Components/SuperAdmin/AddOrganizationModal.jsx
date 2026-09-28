@@ -2,39 +2,54 @@ import React, { useState } from "react";
 import { HiOutlineX, HiOutlineOfficeBuilding } from "react-icons/hi";
 import { createOrganizationAPI } from "../../../../services/allAPI";
 import { Navigate, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
-function AddOrganizationModal({ isOpen, onClose }) {
-  const navigate=useNavigate()
-  const [formData, setFormData] = useState({
+const initialFormState = {
     orgName: "",
     contactEmail: "",
     adminName: "",
     adminEmail: "",
     adminPassword: "",
-  });
+};
 
-  if (!isOpen) return null;
+function AddOrganizationModal({ onClose }) {
+  const navigate = useNavigate()
+  const [formData, setFormData] = useState(initialFormState);
+  const [loading, setLoading] = useState(false);
+
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async() => {
-    if(!formData.orgName||!formData.adminEmail){
-      toast.error('Please fill teh form!')
-      return;
+  const handleClose = () => {
+    setFormData(initialFormState); // reset on cancel/close too
+    onClose();
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.orgName || !formData.adminEmail) {
+        toast.error('Please fill the form!')
+        return;
     }
-    const token=localStorage.getItem('superAdminToken')
-    const reqHeader={Authorization:`Bearer ${token}`}
-    const response= await createOrganizationAPI(formData,reqHeader)
-   console.log(response);
-   if(response.status===200){
-    toast.success('organization added successfully')
-    navigate('/superadmin/dashboard')
-   }
-   else{
-    toast.error(response.data.message)
-   }
+    if (loading) return;
+    setLoading(true);
+
+    const token = localStorage.getItem('superAdminToken')
+    const reqHeader = { Authorization: `Bearer ${token}` }
+
+    try {
+        await createOrganizationAPI(formData, reqHeader)
+        toast.success('Organization added successfully')
+        setFormData(initialFormState); // ✅ reset after success
+        onClose()
+        navigate('/superadmin/dashboard')
+    } catch (err) {
+        toast.error(err.response?.data?.message || 'Failed to create organization')
+    } finally {
+        setLoading(false);
+    }
   };
 
   return (
@@ -135,18 +150,16 @@ function AddOrganizationModal({ isOpen, onClose }) {
 
         {/* footer - centered button */}
         <div className="flex items-center justify-center gap-3 px-7 py-5 border-t border-white/[0.06]">
+          <button onClick={handleClose} className="h-[44px] px-5 text-sm font-medium text-[#a8abb8] hover:text-white">
+    Cancel
+</button>
           <button
-            onClick={onClose}
-            className="h-[44px] px-5 text-sm font-medium text-[#a8abb8] hover:text-white"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="h-[44px] px-6 text-sm font-bold text-[#0d0f14] bg-[#f0a83b] rounded-[3px] hover:bg-[#f5bc6b]"
-          >
-            Create Organization
-          </button>
+    onClick={handleSubmit}
+    disabled={loading}
+    className="h-[44px] px-6 text-sm font-bold text-[#0d0f14] bg-[#f0a83b] rounded-[3px] hover:bg-[#f5bc6b] disabled:opacity-60 cursor-point"
+>
+    {loading ? "Creating..." : "Create Organization"}
+</button>
         </div>
 
       </div>

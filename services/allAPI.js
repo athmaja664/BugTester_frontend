@@ -108,6 +108,11 @@ export const createBugAPI = async (reqBody, reqHeader) => {
   return await commonAPI('POST', `${serverURL}/api/bugs`, reqBody, reqHeader)
 }
 
+// GET BUGS ASSIGNED TO ME
+export const getMyIssuesAPI = async (reqHeader) => {
+  return await commonAPI('GET', `${serverURL}/api/my-issues`, {}, reqHeader)
+}
+
 // GET ALL BUGS
 export const getBugsAPI = async (reqHeader) => {
   return await commonAPI('GET', `${serverURL}/api/bugs`, {}, reqHeader)

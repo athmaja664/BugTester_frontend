@@ -7,6 +7,7 @@ import {
   HiOutlineLogout,
   HiOutlineMenuAlt2,
   HiOutlineX,
+  HiOutlineClipboardList,
 } from "react-icons/hi";
 import { AiOutlineProject } from "react-icons/ai";
 import { BsBug } from "react-icons/bs";
@@ -190,6 +191,7 @@ const handleLogout = () => {
             <CgProfile size={18} />
             Profile
           </NavLink>
+
 
         </nav>
 
