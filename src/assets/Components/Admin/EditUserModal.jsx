@@ -47,56 +47,56 @@ function EditUserModal({ user, onClose, getUsers }) {
     }
 
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999] px-4">
-            <div className="bg-[#161922] border border-white/[0.08] rounded-[16px] shadow-lg w-full max-w-[420px] p-6">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[999] px-4">
+            <div className="bg-white border border-[#e3e6ec] rounded-[16px] shadow-2xl w-full max-w-[420px] p-6">
 
-                <h3 className="text-lg font-semibold text-white mb-5">
+                <h3 className="text-lg font-semibold text-[#1a1d26] mb-5">
                     Edit User
                 </h3>
 
                 <div className="flex flex-col gap-4">
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-[12.5px] font-medium text-[#a8abb8]">Name</label>
+                        <label className="text-[12.5px] font-medium text-[#5b606c]">Name</label>
                         <input
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="e.g. Rahul S."
-                            className="h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b]"
+                            className="h-[42px] px-3.5 rounded-[8px] bg-[#f7f8fa] border border-[#e3e6ec] text-[13.5px] text-[#1a1d26] placeholder:text-[#9aa0ad] outline-none focus:border-[#f0a83b] focus:bg-white"
                         />
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-[12.5px] font-medium text-[#a8abb8]">Email</label>
+                        <label className="text-[12.5px] font-medium text-[#5b606c]">Email</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="name@bugtester.com"
-                            className="h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b]"
+                            className="h-[42px] px-3.5 rounded-[8px] bg-[#f7f8fa] border border-[#e3e6ec] text-[13.5px] text-[#1a1d26] placeholder:text-[#9aa0ad] outline-none focus:border-[#f0a83b] focus:bg-white"
                         />
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-[12.5px] font-medium text-[#a8abb8]">Role</label>
+                        <label className="text-[12.5px] font-medium text-[#5b606c]">Role</label>
                         <select
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
-                            className="h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white outline-none focus:border-[#f0a83b] cursor-pointer"
+                            className="h-[42px] px-3.5 rounded-[8px] bg-[#f7f8fa] border border-[#e3e6ec] text-[13.5px] text-[#1a1d26] outline-none focus:border-[#f0a83b] cursor-pointer"
                         >
-                            <option className="bg-[#161922]" value="Administrator">Administrator</option>
-                            <option className="bg-[#161922]" value="Lead">Lead</option>
-                            <option className="bg-[#161922]" value="Developer">Developer</option>
-                            <option className="bg-[#161922]" value="Tester">Tester</option>
+                            <option className="bg-white" value="Administrator">Administrator</option>
+                            <option className="bg-white" value="Lead">Lead</option>
+                            <option className="bg-white" value="Developer">Developer</option>
+                            <option className="bg-white" value="Tester">Tester</option>
                         </select>
                     </div>
 
                 </div>
 
                 {/* Reset Password section */}
-                <div className="mt-6 pt-5 border-t border-white/[0.06]">
-                    <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                <div className="mt-6 pt-5 border-t border-[#eceef2]">
+                    <label className="text-[12.5px] font-medium text-[#5b606c]">
                         Reset Password
                     </label>
                     <div className="flex gap-3 mt-2">
@@ -105,11 +105,11 @@ function EditUserModal({ user, onClose, getUsers }) {
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
                             placeholder="New password"
-                            className="flex-1 h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b]"
+                            className="flex-1 h-[42px] px-3.5 rounded-[8px] bg-[#f7f8fa] border border-[#e3e6ec] text-[13.5px] text-[#1a1d26] placeholder:text-[#9aa0ad] outline-none focus:border-[#f0a83b] focus:bg-white"
                         />
                         <button
                             onClick={handleResetPassword}
-                            className="px-4 h-[42px] text-sm font-medium text-[#f0a83b] border border-[#f0a83b]/25 bg-[#f0a83b]/[0.08] rounded-[8px] hover:bg-[#f0a83b]/[0.15] transition-colors cursor-pointer whitespace-nowrap"
+                            className="px-4 h-[42px] text-sm font-medium text-[#b97a0f] border border-[#f0a83b]/40 bg-[#f0a83b]/[0.10] rounded-[8px] hover:bg-[#f0a83b]/[0.20] transition-colors cursor-pointer whitespace-nowrap"
                         >
                             Reset
                         </button>
@@ -119,7 +119,7 @@ function EditUserModal({ user, onClose, getUsers }) {
                 <div className="flex justify-end gap-3 mt-6">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-[#a8abb8] border border-white/10 rounded-[8px] hover:bg-white/[0.04] transition-colors cursor-pointer"
+                        className="px-4 py-2 text-sm font-medium text-[#5b606c] border border-[#e3e6ec] rounded-[8px] hover:bg-black/[0.04] transition-colors cursor-pointer"
                     >
                         Cancel
                     </button>

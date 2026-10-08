@@ -8,17 +8,17 @@ const ATTACHMENTS_REQUIRED = false
 const MAX_FILES = 5
 const MAX_FILE_SIZE_MB = 5
 
-const baseField = "px-3.5 rounded-[8px] bg-white/[0.03] border text-[13.5px] text-white placeholder:text-[#5b606c] outline-none transition-colors"
+const baseField = "px-3.5 rounded-[8px] bg-[#f7f8fa] border text-[13.5px] text-[#1a1d26] placeholder:text-[#9aa0ad] outline-none transition-colors"
 
 const allPriorities = ["Low", "Medium", "High", "Critical"]
 
 function Required() {
-    return <span className="text-[#f26d6d] ml-0.5">*</span>
+    return <span className="text-[#e5484d] ml-0.5">*</span>
 }
 
 function FieldError({ message }) {
     if (!message) return null
-    return <p className="text-[12px] text-[#f26d6d] -mt-0.5">{message}</p>
+    return <p className="text-[12px] text-[#e5484d] -mt-0.5">{message}</p>
 }
 
 // single-select dropdown that closes when the mouse leaves it
@@ -45,21 +45,21 @@ function SingleSelect({ value, options, placeholder, onChange, hasError }) {
             <button
                 type="button"
                 onClick={() => setOpen((prev) => !prev)}
-                className={`w-full h-[42px] text-left cursor-pointer flex items-center justify-between ${baseField} ${hasError ? "border-[#f26d6d]" : "border-white/10 focus:border-[#f0a83b]"}`}
+                className={`w-full h-[42px] text-left cursor-pointer flex items-center justify-between ${baseField} ${hasError ? "border-[#e5484d]" : "border-[#e3e6ec] focus:border-[#f0a83b]"}`}
             >
-                <span className={`truncate ${selected ? "text-white" : "text-[#5b606c]"}`}>
+                <span className={`truncate ${selected ? "text-[#1a1d26]" : "text-[#9aa0ad]"}`}>
                     {selected ? selected.label : placeholder}
                 </span>
-                <span className="text-[#6a6f7b] text-xs ml-2 flex-shrink-0">
+                <span className="text-[#8a8f9c] text-xs ml-2 flex-shrink-0">
                     {open ? "▲" : "▼"}
                 </span>
             </button>
 
             {open && (
                 <div className="absolute top-full left-0 right-0 z-10 pt-1">
-                    <div className="bg-[#1c202b] border border-white/10 rounded-[8px] shadow-lg max-h-[180px] overflow-y-auto p-1.5">
+                    <div className="bg-white border border-[#e3e6ec] rounded-[8px] shadow-lg max-h-[180px] overflow-y-auto p-1.5">
                         {options.length === 0 && (
-                            <p className="text-[12.5px] text-[#5b606c] px-2 py-1">No options found</p>
+                            <p className="text-[12.5px] text-[#9aa0ad] px-2 py-1">No options found</p>
                         )}
                         {options.map((o) => {
                             const isSelected = String(o.value) === String(value)
@@ -71,7 +71,7 @@ function SingleSelect({ value, options, placeholder, onChange, hasError }) {
                                         onChange(o.value)
                                         setOpen(false)
                                     }}
-                                    className={`w-full flex items-center justify-between gap-2 text-left text-[13px] px-2.5 py-2 rounded-[6px] cursor-pointer hover:bg-white/[0.05] ${isSelected ? "text-[#f0a83b]" : "text-white"}`}
+                                    className={`w-full flex items-center justify-between gap-2 text-left text-[13px] px-2.5 py-2 rounded-[6px] cursor-pointer hover:bg-[#f3f4f7] ${isSelected ? "text-[#b97a0f] bg-[#f0a83b]/[0.08]" : "text-[#1a1d26]"}`}
                                 >
                                     <span className="truncate">{o.label}</span>
                                     {isSelected && <span className="text-xs flex-shrink-0">✓</span>}
@@ -160,7 +160,7 @@ function ReportBugModal({ onClose, getBugs }) {
     }
 
     const borderClass = (name) =>
-        errors[name] ? "border-[#f26d6d]" : "border-white/10 focus:border-[#f0a83b]"
+        errors[name] ? "border-[#e5484d]" : "border-[#e3e6ec] focus:border-[#f0a83b]"
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -279,16 +279,16 @@ function ReportBugModal({ onClose, getBugs }) {
     }
 
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999] px-4">
-            <div className="bg-[#161922] border border-white/[0.08] rounded-[16px] shadow-lg w-full max-w-[720px] max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[999] px-4">
+            <div className="bg-white border border-[#e3e6ec] rounded-[16px] shadow-2xl w-full max-w-[720px] max-h-[90vh] overflow-y-auto">
 
                 {/* header */}
-                <div className="flex items-center justify-between px-5 sm:px-7 pt-6 sm:pt-7 pb-5 border-b border-white/[0.06]">
-                    <h3 className="text-lg font-semibold text-white">Report Bug</h3>
+                <div className="flex items-center justify-between px-5 sm:px-7 pt-6 sm:pt-7 pb-5 border-b border-[#eceef2]">
+                    <h3 className="text-lg font-semibold text-[#1a1d26]">Report Bug</h3>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-[8px] text-[#5b606c] hover:bg-white/[0.04] hover:text-white transition-colors cursor-pointer"
+                        className="w-8 h-8 flex items-center justify-center rounded-[8px] text-[#8a8f9c] hover:bg-black/[0.05] hover:text-[#1a1d26] transition-colors cursor-pointer"
                     >
                         <AiOutlineClose size={16} />
                     </button>
@@ -299,12 +299,12 @@ function ReportBugModal({ onClose, getBugs }) {
 
                     {/* LEFT column */}
                     <div className="flex flex-col gap-5">
-                        <p className="text-xs font-semibold text-[#f0a83b] uppercase tracking-wide">
+                        <p className="text-xs font-semibold text-[#c98410] uppercase tracking-wide">
                             Bug Details
                         </p>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                            <label className="text-[12.5px] font-medium text-[#5b606c]">
                                 Bug Title<Required />
                             </label>
                             <input
@@ -319,7 +319,7 @@ function ReportBugModal({ onClose, getBugs }) {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                            <label className="text-[12.5px] font-medium text-[#5b606c]">
                                 Description<Required />
                             </label>
                             <textarea
@@ -334,7 +334,7 @@ function ReportBugModal({ onClose, getBugs }) {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                            <label className="text-[12.5px] font-medium text-[#5b606c]">
                                 Project<Required />
                             </label>
                             <SingleSelect
@@ -348,7 +348,7 @@ function ReportBugModal({ onClose, getBugs }) {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                            <label className="text-[12.5px] font-medium text-[#5b606c]">
                                 Attachments ({ATTACHMENTS_REQUIRED ? "required" : "optional"}, max {MAX_FILES} files, {MAX_FILE_SIZE_MB}MB each)
                                 {ATTACHMENTS_REQUIRED && <Required />}
                             </label>
@@ -356,9 +356,9 @@ function ReportBugModal({ onClose, getBugs }) {
                                 type="file"
                                 multiple
                                 onChange={handleFileChange}
-                                className="text-[13px] text-[#a8abb8] file:mr-3 file:px-3 file:py-1.5 file:rounded-[6px] file:border-0 file:bg-[#f0a83b]/[0.15] file:text-[#f0a83b] file:text-[12.5px] file:cursor-pointer cursor-pointer"
+                                className="text-[13px] text-[#5b606c] file:mr-3 file:px-3 file:py-1.5 file:rounded-[6px] file:border-0 file:bg-[#f0a83b]/[0.18] file:text-[#b97a0f] file:text-[12.5px] file:cursor-pointer cursor-pointer"
                             />
-                            <p className="text-[12px] text-[#5b606c]">
+                            <p className="text-[12px] text-[#8a8f9c]">
                                 {bugData.attachments.length} of {MAX_FILES} files added
                             </p>
                             {bugData.attachments.length > 0 && (
@@ -366,13 +366,13 @@ function ReportBugModal({ onClose, getBugs }) {
                                     {bugData.attachments.map((file, index) => (
                                         <div
                                             key={index}
-                                            className="flex items-center justify-between gap-2 px-3 py-1.5 rounded-[6px] bg-white/[0.03] border border-white/10"
+                                            className="flex items-center justify-between gap-2 px-3 py-1.5 rounded-[6px] bg-[#f7f8fa] border border-[#e3e6ec]"
                                         >
-                                            <span className="text-[12.5px] text-white truncate">{file.name}</span>
+                                            <span className="text-[12.5px] text-[#1a1d26] truncate">{file.name}</span>
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveFile(index)}
-                                                className="text-[#6a6f7b] hover:text-white flex-shrink-0 cursor-pointer"
+                                                className="text-[#8a8f9c] hover:text-[#1a1d26] flex-shrink-0 cursor-pointer"
                                             >
                                                 <AiOutlineClose size={13} />
                                             </button>
@@ -386,12 +386,12 @@ function ReportBugModal({ onClose, getBugs }) {
 
                     {/* RIGHT column */}
                     <div className="flex flex-col gap-5">
-                        <p className="text-xs font-semibold text-[#f0a83b] uppercase tracking-wide">
+                        <p className="text-xs font-semibold text-[#c98410] uppercase tracking-wide">
                             Classification
                         </p>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                            <label className="text-[12.5px] font-medium text-[#5b606c]">
                                 Status<Required />
                             </label>
                             <SingleSelect
@@ -405,7 +405,7 @@ function ReportBugModal({ onClose, getBugs }) {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                            <label className="text-[12.5px] font-medium text-[#5b606c]">
                                 Priority<Required />
                             </label>
                             <SingleSelect
@@ -419,7 +419,7 @@ function ReportBugModal({ onClose, getBugs }) {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                            <label className="text-[12.5px] font-medium text-[#5b606c]">
                                 Tag<Required />
                             </label>
                             <div className="flex gap-2 flex-wrap">
@@ -429,8 +429,8 @@ function ReportBugModal({ onClose, getBugs }) {
                                         key={tag}
                                         onClick={() => handleTagSelect(tag)}
                                         className={bugData.tag === tag
-                                            ? "px-3 py-1.5 rounded-[6px] text-[12.5px] font-medium border cursor-pointer transition-colors bg-[#f0a83b]/[0.15] text-[#f0a83b] border-[#f0a83b]/40"
-                                            : "px-3 py-1.5 rounded-[6px] text-[12.5px] font-medium border cursor-pointer transition-colors bg-white/[0.03] text-[#a8abb8] border-white/10 hover:border-white/20"
+                                            ? "px-3 py-1.5 rounded-[6px] text-[12.5px] font-medium border cursor-pointer transition-colors bg-[#f0a83b]/[0.18] text-[#b97a0f] border-[#f0a83b]/60"
+                                            : "px-3 py-1.5 rounded-[6px] text-[12.5px] font-medium border cursor-pointer transition-colors bg-[#f7f8fa] text-[#5b606c] border-[#e3e6ec] hover:border-[#c9cdd6]"
                                         }
                                     >
                                         {tag}
@@ -446,7 +446,7 @@ function ReportBugModal({ onClose, getBugs }) {
                             ref={assignDropdownRef}
                             onMouseLeave={() => setAssignDropdownOpen(false)}
                         >
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                            <label className="text-[12.5px] font-medium text-[#5b606c]">
                                 Assign To<Required />
                             </label>
 
@@ -455,7 +455,7 @@ function ReportBugModal({ onClose, getBugs }) {
                                 onClick={() => setAssignDropdownOpen((prev) => !prev)}
                                 className={`w-full h-[42px] text-left cursor-pointer flex items-center justify-between ${baseField} ${borderClass('assignedTo')}`}
                             >
-                                <span className={`truncate ${bugData.assignedTo.length === 0 ? "text-[#5b606c]" : "text-white"}`}>
+                                <span className={`truncate ${bugData.assignedTo.length === 0 ? "text-[#9aa0ad]" : "text-[#1a1d26]"}`}>
                                     {bugData.assignedTo.length === 0
                                         ? "Select developers"
                                         : developers
@@ -464,21 +464,21 @@ function ReportBugModal({ onClose, getBugs }) {
                                             .join(", ")
                                     }
                                 </span>
-                                <span className="text-[#6a6f7b] text-xs ml-2 flex-shrink-0">
+                                <span className="text-[#8a8f9c] text-xs ml-2 flex-shrink-0">
                                     {assignDropdownOpen ? "▲" : "▼"}
                                 </span>
                             </button>
 
                             {assignDropdownOpen && (
                                 <div className="absolute top-full left-0 right-0 z-10 pt-1">
-                                    <div className="bg-[#1c202b] border border-white/10 rounded-[8px] shadow-lg max-h-[180px] overflow-y-auto p-2">
+                                    <div className="bg-white border border-[#e3e6ec] rounded-[8px] shadow-lg max-h-[180px] overflow-y-auto p-2">
                                         {developers.length === 0 && (
-                                            <p className="text-[12.5px] text-[#5b606c] px-2 py-1">No developers found</p>
+                                            <p className="text-[12.5px] text-[#9aa0ad] px-2 py-1">No developers found</p>
                                         )}
                                         {developers.map((d) => (
                                             <label
                                                 key={d.id}
-                                                className="flex items-center gap-2 text-[13px] text-white px-2 py-2 rounded-[6px] cursor-pointer hover:bg-white/[0.05]"
+                                                className="flex items-center gap-2 text-[13px] text-[#1a1d26] px-2 py-2 rounded-[6px] cursor-pointer hover:bg-[#f3f4f7]"
                                             >
                                                 <input
                                                     type="checkbox"
@@ -499,11 +499,11 @@ function ReportBugModal({ onClose, getBugs }) {
                 </div>
 
                 {/* footer */}
-                <div className="flex items-center justify-center gap-3 px-5 sm:px-7 py-5 border-t border-white/[0.06]">
+                <div className="flex items-center justify-center gap-3 px-5 sm:px-7 py-5 border-t border-[#eceef2]">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="h-[44px] px-5 text-sm font-medium text-[#a8abb8] hover:text-white cursor-pointer"
+                        className="h-[44px] px-5 text-sm font-medium text-[#5b606c] hover:text-[#1a1d26] cursor-pointer"
                     >
                         Cancel
                     </button>

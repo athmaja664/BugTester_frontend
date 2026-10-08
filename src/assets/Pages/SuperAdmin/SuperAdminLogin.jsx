@@ -41,7 +41,7 @@ function SuperAdminLogin() {
       className="min-h-screen font-['DM_Sans',sans-serif] relative overflow-hidden flex items-center justify-center"
       style={{
         background:
-          "radial-gradient(ellipse 900px 600px at 15% 10%, rgba(240,168,59,0.10), transparent 60%), radial-gradient(ellipse 900px 700px at 85% 90%, rgba(87,106,255,0.14), transparent 60%), #0d0f14",
+          "radial-gradient(ellipse 900px 600px at 15% 10%, rgba(240,168,59,0.14), transparent 60%), radial-gradient(ellipse 900px 700px at 85% 90%, rgba(87,106,255,0.10), transparent 60%), #f6f7fa",
       }}
     >
       {/* ambient grid texture */}
@@ -49,7 +49,7 @@ function SuperAdminLogin() {
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
         style={{
           backgroundImage:
-            "linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)",
+            "linear-gradient(#1a1d26 1px, transparent 1px), linear-gradient(90deg, #1a1d26 1px, transparent 1px)",
           backgroundSize: "44px 44px",
         }}
       />
@@ -59,27 +59,27 @@ function SuperAdminLogin() {
         <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#f0a83b]">
           <FaBug className="w-[18px] h-[18px] text-[#0d0f14]" />
         </span>
-        <span className="text-[19px] font-bold tracking-tight text-white">
+        <span className="text-[19px] font-bold tracking-tight text-[#1a1d26]">
           BugTester
         </span>
       </a>
 
       {/* card */}
       <section
-        className="relative flex flex-col items-start w-[460px] max-w-[92vw] px-[46px] pt-[52px] pb-[48px] bg-[#161922] border border-white/[0.06] rounded-[14px] shadow-[0_8px_40px_rgba(0,0,0,0.35)] max-[400px]:px-6 max-[400px]:pt-10 max-[400px]:pb-9"
+        className="relative flex flex-col items-start w-[460px] max-w-[92vw] px-[46px] pt-[52px] pb-[48px] bg-white border border-[#e3e6ec] rounded-[14px] shadow-[0_8px_40px_rgba(26,29,38,0.08)] max-[400px]:px-6 max-[400px]:pt-10 max-[400px]:pb-9"
         aria-labelledby="superadmin-login-title"
       >
         {/* badge */}
-        <div className="flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/10">
-          <HiOutlineShieldCheck className="w-4 h-4 text-[#f0a83b]" />
-          <span className="text-[12px] font-medium text-[#a8abb8] tracking-wide">
+        <div className="flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-[#fff6e6] border border-[#f0a83b]/30">
+          <HiOutlineShieldCheck className="w-4 h-4 text-[#d98a14]" />
+          <span className="text-[12px] font-medium text-[#8f5f0b] tracking-wide">
             PLATFORM ACCESS
           </span>
         </div>
 
         <h2
           id="superadmin-login-title"
-          className="mb-2 text-[24px] font-semibold leading-normal text-white"
+          className="mb-2 text-[24px] font-semibold leading-normal text-[#1a1d26]"
         >
           SuperAdmin Sign in
         </h2>
@@ -88,15 +88,15 @@ function SuperAdminLogin() {
         </p>
 
         <div className="flex flex-col items-start self-stretch w-full gap-[10px]">
-          <label className="block text-sm font-medium leading-normal text-[#a8abb8]" htmlFor="sa-email">
+          <label className="block text-sm font-medium leading-normal text-[#5b606c]" htmlFor="sa-email">
             Email
           </label>
-          <div className="flex items-center gap-[10px] h-[52px] px-[14px] w-full bg-white/[0.03] border border-white/10 rounded-[4px] transition-colors focus-within:border-[#f0a83b]">
-            <span className="flex-none w-5 h-5 text-[#6a6f7b]" aria-hidden="true">
+          <div className="flex items-center gap-[10px] h-[52px] px-[14px] w-full bg-[#f7f8fa] border border-[#e3e6ec] rounded-[4px] transition-colors focus-within:border-[#f0a83b] focus-within:bg-white">
+            <span className="flex-none w-5 h-5 text-[#8a8f9c]" aria-hidden="true">
               <HiOutlineMail className="w-5 h-5" />
             </span>
             <input
-              className="flex-1 w-full min-w-0 h-full text-base font-normal text-white bg-transparent border-none outline-none placeholder:font-medium placeholder:text-[#5b606c]"
+              className="flex-1 w-full min-w-0 h-full text-base font-normal text-[#1a1d26] bg-transparent border-none outline-none placeholder:font-medium placeholder:text-[#9aa0ad]"
               type="text"
               id="sa-email"
               name="email"
@@ -109,15 +109,15 @@ function SuperAdminLogin() {
         </div>
 
         <div className="flex flex-col items-start self-stretch w-full gap-[10px] mt-[28px]">
-          <label className="block text-sm font-medium leading-normal text-[#a8abb8]" htmlFor="sa-password">
+          <label className="block text-sm font-medium leading-normal text-[#5b606c]" htmlFor="sa-password">
             Password
           </label>
-          <div className="flex items-center gap-[10px] h-[52px] px-[14px] w-full bg-white/[0.03] border border-white/10 rounded-[4px] transition-colors focus-within:border-[#f0a83b]">
-            <span className="flex-none w-5 h-5 text-[#6a6f7b]" aria-hidden="true">
+          <div className="flex items-center gap-[10px] h-[52px] px-[14px] w-full bg-[#f7f8fa] border border-[#e3e6ec] rounded-[4px] transition-colors focus-within:border-[#f0a83b] focus-within:bg-white">
+            <span className="flex-none w-5 h-5 text-[#8a8f9c]" aria-hidden="true">
               <HiOutlineLockClosed className="w-5 h-5" />
             </span>
             <input
-              className="flex-1 w-full min-w-0 h-full text-base font-normal text-white bg-transparent border-none outline-none placeholder:font-medium placeholder:text-[#5b606c]"
+              className="flex-1 w-full min-w-0 h-full text-base font-normal text-[#1a1d26] bg-transparent border-none outline-none placeholder:font-medium placeholder:text-[#9aa0ad]"
               type={showPassword ? "text" : "password"}
               id="sa-password"
               name="password"
@@ -127,7 +127,7 @@ function SuperAdminLogin() {
               onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
             />
             <span
-              className="text-[#6a6f7b] ml-2 cursor-pointer hover:text-[#a8abb8]"
+              className="text-[#8a8f9c] ml-2 cursor-pointer hover:text-[#1a1d26]"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
@@ -143,13 +143,13 @@ function SuperAdminLogin() {
           Sign in
         </button>
 
-        <p className="self-stretch mt-6 text-center text-xs text-[#5b606c]">
+        <p className="self-stretch mt-6 text-center text-xs text-[#8a8f9c]">
           Client team members should use the regular BugTester login instead.
         </p>
         <button
           type="button"
           onClick={() => navigate('/admin/login')}
-          className="self-stretch mt-3 text-center text-xs text-[#f0a83b] hover:text-[#f5bc6b] underline underline-offset-2 bg-transparent border-none cursor-pointer"
+          className="self-stretch mt-3 text-center text-xs text-[#b97a0f] hover:text-[#8f5f0b] underline underline-offset-2 bg-transparent border-none cursor-pointer"
         >
           Go to client login
         </button>

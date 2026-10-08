@@ -168,22 +168,22 @@ function AdminProfile() {
   const initials = getInitials(profile.name)
 
   const statCards = [
-    { label: "Projects Managed", value: stats.projectsManaged, icon: AiOutlineProject, color: "bg-[#f0a83b]/[0.12] text-[#f0a83b]" },
-    { label: "Bugs Reviewed", value: stats.bugsReviewed, icon: BsBug, color: "bg-[#576aff]/[0.12] text-[#8b98ff]" },
-    { label: "Team Members", value: stats.teamMembers, icon: CgProfile, color: "bg-[#4ade80]/[0.12] text-[#4ade80]" },
+    { label: "Projects Managed", value: stats.projectsManaged, icon: AiOutlineProject, color: "bg-[#f0a83b]/[0.12] text-[#b45309]" },
+    { label: "Bugs Reviewed", value: stats.bugsReviewed, icon: BsBug, color: "bg-[#576aff]/[0.12] text-[#4f5fe0]" },
+    { label: "Team Members", value: stats.teamMembers, icon: CgProfile, color: "bg-[#4ade80]/[0.15] text-[#16a34a]" },
   ]
 
   return (
-    <div className="flex min-h-screen bg-[#0d0f14]">
+    <div className="flex min-h-screen bg-[#f4f5f9]">
       <Sidebar />
 
       {/* right column */}
       <div className="flex-1 flex flex-col min-w-0">
 
         {/* header */}
-        <div className="sticky top-0 z-20 flex items-center justify-between gap-3 h-[64px] sm:h-[72px] px-4 sm:px-5 lg:px-8 bg-[#0d0f14]/95 backdrop-blur border-b border-white/[0.06]">
+        <div className="sticky top-0 z-20 flex items-center justify-between gap-3 h-[64px] sm:h-[72px] px-4 sm:px-5 lg:px-8 bg-white/90 backdrop-blur border-b border-black/[0.08]">
 
-          <h1 className="text-[16px] sm:text-[18px] font-semibold text-white pl-12 lg:pl-0 truncate">
+          <h1 className="text-[16px] sm:text-[18px] font-semibold text-[#111827] pl-12 lg:pl-0 truncate">
             Profile
           </h1>
         </div>
@@ -193,11 +193,11 @@ function AdminProfile() {
 
           {/* page header */}
 <div className="mb-6 sm:mb-8 min-w-0">
-  <h1 className="text-[20px] sm:text-[22px] font-semibold text-white truncate">
+  <h1 className="text-[20px] sm:text-[22px] font-semibold text-[#111827] truncate">
     {profile.name || "Admin User"}
   </h1>
 
-  <p className="flex items-center gap-1.5 text-[13px] sm:text-[14px] text-[#f0a83b] mt-1 min-w-0">
+  <p className="flex items-center gap-1.5 text-[13px] sm:text-[14px] text-[#b45309] mt-1 min-w-0">
     <FiBriefcase size={14} className="shrink-0" />
     <span className="truncate">
       {profile.organization_name || "No organization found"}
@@ -206,38 +206,33 @@ function AdminProfile() {
 </div>
 
           {/* profile banner */}
-          <div className="p-4 sm:p-6 bg-[#161922] border border-white/[0.06] rounded-[14px] mb-5 sm:mb-6">
+          <div className="p-4 sm:p-6 bg-white border border-black/[0.08] shadow-sm rounded-[14px] mb-5 sm:mb-6">
 
             <div className="flex items-center gap-3 sm:gap-4 min-w-0">
 
-              <span className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#f0a83b]/[0.12] border border-[#f0a83b]/25 text-[#f0a83b] text-[18px] sm:text-[20px] font-semibold shrink-0">
+              <span className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#f0a83b]/[0.12] border border-[#f0a83b]/25 text-[#b45309] text-[18px] sm:text-[20px] font-semibold shrink-0">
                 {initials}
               </span>
 
               <div className="min-w-0">
 
-                <h2 className="text-[17px] sm:text-[18px] font-semibold text-white truncate">
+                <h2 className="text-[17px] sm:text-[18px] font-semibold text-[#111827] truncate">
                   {profile.name || "Admin User"}
                 </h2>
 
-                <p className="text-[13px] sm:text-[13.5px] text-[#8b909c] mt-0.5 truncate">
+                <p className="text-[13px] sm:text-[13.5px] text-[#6b7280] mt-0.5 truncate">
                   {profile.email}
                 </p>
-<p className="flex items-center gap-1.5 text-[12.5px] sm:text-[13px] text-[#f0a83b] mt-1 min-w-0">
-  <FiBriefcase size={13} className="shrink-0" />
-  <span className="truncate">
-    {profile.organization_name || "No organization found"}
-  </span>
-</p>
+
                 {/* Organization name */}
                 {profile.organization_name && (
-                  <p className="flex items-center gap-1.5 text-[12.5px] sm:text-[13px] text-[#f0a83b] mt-1 min-w-0">
+                  <p className="flex items-center gap-1.5 text-[12.5px] sm:text-[13px] text-[#b45309] mt-1 min-w-0">
                     <FiBriefcase size={13} className="shrink-0" />
                     <span className="truncate">{profile.organization_name}</span>
                   </p>
                 )}
 
-                <span className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 text-[12px] font-medium rounded-[5px] bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25">
+                <span className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 text-[12px] font-medium rounded-[5px] bg-[#f0a83b]/[0.12] text-[#b45309] border border-[#f0a83b]/25">
                   <HiOutlineShieldCheck size={13} />
                   {profile.role}
                 </span>
@@ -254,17 +249,17 @@ function AdminProfile() {
             {statCards.map((card) => {
               const Icon = card.icon
               return (
-                <div key={card.label} className="p-4 sm:p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+                <div key={card.label} className="p-4 sm:p-5 bg-white border border-black/[0.08] shadow-sm rounded-[14px]">
 
                   <span className={`flex items-center justify-center w-9 h-9 rounded-[8px] mb-3 sm:mb-4 ${card.color}`}>
                     <Icon size={17} />
                   </span>
 
-                  <p className="text-[22px] sm:text-[24px] font-semibold text-white">
+                  <p className="text-[22px] sm:text-[24px] font-semibold text-[#111827]">
                     {card.value}
                   </p>
 
-                  <p className="text-[12.5px] sm:text-[13px] text-[#8b909c] mt-1">
+                  <p className="text-[12.5px] sm:text-[13px] text-[#6b7280] mt-1">
                     {card.label}
                   </p>
 
@@ -278,9 +273,9 @@ function AdminProfile() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
 
             {/* account details */}
-            <div className="lg:col-span-2 p-4 sm:p-6 bg-[#161922] border border-white/[0.06] rounded-[14px] min-w-0">
+            <div className="lg:col-span-2 p-4 sm:p-6 bg-white border border-black/[0.08] shadow-sm rounded-[14px] min-w-0">
 
-              <h3 className="text-[15px] sm:text-[16px] font-semibold text-white mb-5">
+              <h3 className="text-[15px] sm:text-[16px] font-semibold text-[#111827] mb-5">
                 Account Details
               </h3>
 
@@ -288,7 +283,7 @@ function AdminProfile() {
 
                 <div className="flex flex-col gap-1.5 min-w-0">
 
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                  <label className="text-[12.5px] font-medium text-[#4b5563]">
                     Full Name
                   </label>
 
@@ -297,22 +292,22 @@ function AdminProfile() {
                     name="name"
                     value={profile.name || ""}
                     onChange={handleProfileChange}
-                    className="h-[44px] px-3.5 w-full rounded-[8px] bg-white/[0.03] border border-white/10 text-[14px] text-white outline-none focus:border-[#f0a83b] transition-colors"
+                    className="h-[44px] px-3.5 w-full rounded-[8px] bg-[#f9fafb] border border-black/[0.12] text-[14px] text-[#111827] outline-none focus:border-[#f0a83b] transition-colors"
                   />
 
                 </div>
 
                 <div className="flex flex-col gap-1.5 min-w-0">
 
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                  <label className="text-[12.5px] font-medium text-[#4b5563]">
                     Email Address
                   </label>
 
-                  <div className="flex items-center gap-2.5 h-[44px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 min-w-0">
+                  <div className="flex items-center gap-2.5 h-[44px] px-3.5 rounded-[8px] bg-[#f9fafb] border border-black/[0.12] min-w-0">
 
-                    <HiOutlineMail className="text-[#5b606c] shrink-0" size={16} />
+                    <HiOutlineMail className="text-[#9ca3af] shrink-0" size={16} />
 
-                    <span className="text-[14px] text-white truncate">
+                    <span className="text-[14px] text-[#111827] truncate">
                       {profile.email}
                     </span>
 
@@ -322,13 +317,13 @@ function AdminProfile() {
 
                 <div className="flex flex-col gap-1.5 min-w-0">
 
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                  <label className="text-[12.5px] font-medium text-[#4b5563]">
                     Phone Number
                   </label>
 
-                  <div className="flex items-center gap-2.5 h-[44px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 focus-within:border-[#f0a83b] transition-colors min-w-0">
+                  <div className="flex items-center gap-2.5 h-[44px] px-3.5 rounded-[8px] bg-[#f9fafb] border border-black/[0.12] focus-within:border-[#f0a83b] transition-colors min-w-0">
 
-                    <HiOutlinePhone className="text-[#5b606c] shrink-0" size={16} />
+                    <HiOutlinePhone className="text-[#9ca3af] shrink-0" size={16} />
 
                     <input
                       type="text"
@@ -336,7 +331,7 @@ function AdminProfile() {
                       value={profile.phone || ""}
                       onChange={handleProfileChange}
                       placeholder="Enter phone number"
-                      className="flex-1 w-full min-w-0 bg-transparent border-none outline-none text-[14px] text-white placeholder:text-[#5b606c]"
+                      className="flex-1 w-full min-w-0 bg-transparent border-none outline-none text-[14px] text-[#111827] placeholder:text-[#9ca3af]"
                     />
 
                   </div>
@@ -345,7 +340,7 @@ function AdminProfile() {
 
                 <div className="flex flex-col gap-1.5 min-w-0">
 
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                  <label className="text-[12.5px] font-medium text-[#4b5563]">
                     Role
                   </label>
 
@@ -353,22 +348,22 @@ function AdminProfile() {
                     type="text"
                     value={profile.role || ""}
                     readOnly
-                    className="h-[44px] px-3.5 w-full rounded-[8px] bg-white/[0.03] border border-white/10 text-[14px] text-white outline-none"
+                    className="h-[44px] px-3.5 w-full rounded-[8px] bg-[#f9fafb] border border-black/[0.12] text-[14px] text-[#111827] outline-none"
                   />
 
                 </div>
 
                 <div className="flex flex-col gap-1.5 min-w-0">
 
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                  <label className="text-[12.5px] font-medium text-[#4b5563]">
                     Organization
                   </label>
 
-                  <div className="flex items-center gap-2.5 h-[44px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 min-w-0">
+                  <div className="flex items-center gap-2.5 h-[44px] px-3.5 rounded-[8px] bg-[#f9fafb] border border-black/[0.12] min-w-0">
 
-                    <FiBriefcase className="text-[#5b606c] shrink-0" size={16} />
+                    <FiBriefcase className="text-[#9ca3af] shrink-0" size={16} />
 
-                    <span className="text-[14px] text-white truncate">
+                    <span className="text-[14px] text-[#111827] truncate">
                       {profile.organization_name || "—"}
                     </span>
 
@@ -378,7 +373,7 @@ function AdminProfile() {
 
                 <div className="flex flex-col gap-1.5 min-w-0">
 
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                  <label className="text-[12.5px] font-medium text-[#4b5563]">
                     Location
                   </label>
 
@@ -388,22 +383,22 @@ function AdminProfile() {
                     value={profile.location || ""}
                     onChange={handleProfileChange}
                     placeholder="Enter your location"
-                    className="h-[44px] px-3.5 w-full rounded-[8px] bg-white/[0.03] border border-white/10 text-[14px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
+                    className="h-[44px] px-3.5 w-full rounded-[8px] bg-[#f9fafb] border border-black/[0.12] text-[14px] text-[#111827] placeholder:text-[#9ca3af] outline-none focus:border-[#f0a83b] transition-colors"
                   />
 
                 </div>
 
                 <div className="flex flex-col gap-1.5 min-w-0 sm:col-span-2">
 
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                  <label className="text-[12.5px] font-medium text-[#4b5563]">
                     Joined Date
                   </label>
 
-                  <div className="flex items-center gap-2.5 h-[44px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 min-w-0">
+                  <div className="flex items-center gap-2.5 h-[44px] px-3.5 rounded-[8px] bg-[#f9fafb] border border-black/[0.12] min-w-0">
 
-                    <HiOutlineCalendar className="text-[#5b606c] shrink-0" size={16} />
+                    <HiOutlineCalendar className="text-[#9ca3af] shrink-0" size={16} />
 
-                    <span className="text-[14px] text-white truncate">
+                    <span className="text-[14px] text-[#111827] truncate">
                       {profile.created_at ? new Date(profile.created_at).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) : "—"}
                     </span>
 
@@ -418,7 +413,7 @@ function AdminProfile() {
                 <button
                   type="button"
                   onClick={fetchProfile}
-                  className="h-[42px] px-5 w-full sm:w-auto rounded-[8px] text-[13.5px] font-medium text-[#a8abb8] border border-white/10 hover:bg-white/[0.04] hover:text-white transition-colors cursor-pointer"
+                  className="h-[42px] px-5 w-full sm:w-auto rounded-[8px] text-[13.5px] font-medium text-[#4b5563] border border-black/[0.12] hover:bg-black/[0.04] hover:text-[#111827] transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -437,16 +432,16 @@ function AdminProfile() {
             </div>
 
             {/* recent activity */}
-            <div className="p-4 sm:p-6 bg-[#161922] border border-white/[0.06] rounded-[14px] min-w-0">
+            <div className="p-4 sm:p-6 bg-white border border-black/[0.08] shadow-sm rounded-[14px] min-w-0">
 
-              <h3 className="text-[15px] sm:text-[16px] font-semibold text-white mb-5">
+              <h3 className="text-[15px] sm:text-[16px] font-semibold text-[#111827] mb-5">
                 Recent Activity
               </h3>
 
               <div className="flex flex-col gap-5">
 
                 {activity.length === 0 ? (
-                  <p className="text-[13px] text-[#5b606c]">
+                  <p className="text-[13px] text-[#6b7280]">
                     No recent activity yet
                   </p>
                 ) : (
@@ -456,11 +451,11 @@ function AdminProfile() {
                       <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#f0a83b] shrink-0"></span>
 
                       <div className="min-w-0">
-                        <p className="text-[13.5px] text-[#c7c9d1] leading-snug break-words">
+                        <p className="text-[13.5px] text-[#374151] leading-snug break-words">
                           {item.message || item.description || item.action}
                         </p>
 
-                        <p className="text-[12px] text-[#5b606c] mt-1">
+                        <p className="text-[12px] text-[#6b7280] mt-1">
                           {new Date(item.created_at).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })}
                         </p>
                       </div>
@@ -476,9 +471,9 @@ function AdminProfile() {
           </div>
 
           {/* security */}
-          <div className="p-4 sm:p-6 bg-[#161922] border border-white/[0.06] rounded-[14px] mt-5 sm:mt-6">
+          <div className="p-4 sm:p-6 bg-white border border-black/[0.08] shadow-sm rounded-[14px] mt-5 sm:mt-6">
 
-            <h3 className="text-[15px] sm:text-[16px] font-semibold text-white mb-5">
+            <h3 className="text-[15px] sm:text-[16px] font-semibold text-[#111827] mb-5">
               Security
             </h3>
 
@@ -486,7 +481,7 @@ function AdminProfile() {
 
               <div className="flex flex-col gap-1.5">
 
-                <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                <label className="text-[12.5px] font-medium text-[#4b5563]">
                   Current Password
                 </label>
 
@@ -496,14 +491,14 @@ function AdminProfile() {
                   value={passwordData.currentPassword}
                   onChange={handlePasswordChange}
                   placeholder="Enter current password"
-                  className="h-[44px] px-3.5 w-full rounded-[8px] bg-white/[0.03] border border-white/10 text-[14px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
+                  className="h-[44px] px-3.5 w-full rounded-[8px] bg-[#f9fafb] border border-black/[0.12] text-[14px] text-[#111827] placeholder:text-[#9ca3af] outline-none focus:border-[#f0a83b] transition-colors"
                 />
 
               </div>
 
               <div className="flex flex-col gap-1.5">
 
-                <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                <label className="text-[12.5px] font-medium text-[#4b5563]">
                   New Password
                 </label>
 
@@ -513,14 +508,14 @@ function AdminProfile() {
                   value={passwordData.newPassword}
                   onChange={handlePasswordChange}
                   placeholder="Enter new password"
-                  className="h-[44px] px-3.5 w-full rounded-[8px] bg-white/[0.03] border border-white/10 text-[14px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
+                  className="h-[44px] px-3.5 w-full rounded-[8px] bg-[#f9fafb] border border-black/[0.12] text-[14px] text-[#111827] placeholder:text-[#9ca3af] outline-none focus:border-[#f0a83b] transition-colors"
                 />
 
               </div>
 
               <div className="flex flex-col gap-1.5">
 
-                <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                <label className="text-[12.5px] font-medium text-[#4b5563]">
                   Confirm Password
                 </label>
 
@@ -530,7 +525,7 @@ function AdminProfile() {
                   value={passwordData.confirmPassword}
                   onChange={handlePasswordChange}
                   placeholder="Confirm new password"
-                  className="h-[44px] px-3.5 w-full rounded-[8px] bg-white/[0.03] border border-white/10 text-[14px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
+                  className="h-[44px] px-3.5 w-full rounded-[8px] bg-[#f9fafb] border border-black/[0.12] text-[14px] text-[#111827] placeholder:text-[#9ca3af] outline-none focus:border-[#f0a83b] transition-colors"
                 />
 
               </div>

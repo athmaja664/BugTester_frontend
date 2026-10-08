@@ -98,16 +98,16 @@ function AdminBugs() {
     const totalPages = Math.ceil(filteredBugs.length / bugsPerPage)
 
     return (
-        <div className="flex min-h-screen bg-[#0d0f14]">
+        <div className="flex min-h-screen bg-[#f4f5f9]">
             <Sidebar />
 
             {/* right column */}
             <div className="flex-1 flex flex-col min-w-0">
 
                 {/* header */}
-                <div className="sticky top-0 z-20 flex items-center justify-between gap-4 h-[72px] px-5 lg:px-8 bg-[#0d0f14]/95 backdrop-blur border-b border-white/[0.06]">
+                <div className="sticky top-0 z-20 flex items-center justify-between gap-4 h-[72px] px-5 lg:px-8 bg-white/90 backdrop-blur border-b border-black/[0.08]">
 
-                    <h1 className="text-[18px] font-semibold text-white pl-14 lg:pl-0">
+                    <h1 className="text-[18px] font-semibold text-[#111827] pl-14 lg:pl-0">
                         Bugs
                     </h1>
 
@@ -121,10 +121,10 @@ function AdminBugs() {
                     <div className="flex items-center justify-between mb-8">
 
                         <div>
-                            <h1 className="text-[22px] font-semibold text-white">
+                            <h1 className="text-[22px] font-semibold text-[#111827]">
                                 Bugs
                             </h1>
-                            <p className="text-[14px] text-[#8b909c] mt-1">
+                            <p className="text-[14px] text-[#6b7280] mt-1">
                                 Track and manage all reported bugs
                             </p>
                         </div>
@@ -142,10 +142,10 @@ function AdminBugs() {
 
 
                     {/* filter panel */}
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-4 p-5 bg-[#161922] border border-white/[0.06] rounded-[14px] mb-6">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-4 p-5 bg-white border border-black/[0.08] shadow-sm rounded-[14px] mb-6">
 
                         <div className="flex flex-col gap-2 flex-1">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                            <label className="text-[12.5px] font-medium text-[#4b5563]">
                                 Search
                             </label>
                             <input
@@ -153,38 +153,38 @@ function AdminBugs() {
                                 placeholder="Search by bug ID or title"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
+                                className="h-[42px] px-3.5 rounded-[8px] bg-[#f9fafb] border border-black/[0.12] text-[13.5px] text-[#111827] placeholder:text-[#9ca3af] outline-none focus:border-[#f0a83b] transition-colors"
                             />
                         </div>
 
                         <div className="flex flex-col gap-2 w-full sm:w-[200px]">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                            <label className="text-[12.5px] font-medium text-[#4b5563]">
                                 Status
                             </label>
                             <select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
-                                className="w-full h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-left text-white cursor-pointer outline-none focus:border-[#f0a83b]"
+                                className="w-full h-[42px] px-3.5 rounded-[8px] bg-[#f9fafb] border border-black/[0.12] text-[13.5px] text-left text-[#111827] cursor-pointer outline-none focus:border-[#f0a83b]"
                             >
-                                <option className="bg-[#161922]" value="">All Status</option>
+                                <option className="bg-white text-[#111827]" value="">All Status</option>
                                 {allStatuses.map((s) => (
-                                    <option className="bg-[#161922]" key={s} value={s}>{s}</option>
+                                    <option className="bg-white text-[#111827]" key={s} value={s}>{s}</option>
                                 ))}
                             </select>
                         </div>
 
                         <div className="flex flex-col gap-2 w-full sm:w-[200px]">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">
+                            <label className="text-[12.5px] font-medium text-[#4b5563]">
                                 Priority
                             </label>
                             <select
                                 value={priorityFilter}
                                 onChange={(e) => setPriorityFilter(e.target.value)}
-                                className="w-full h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-left text-white cursor-pointer outline-none focus:border-[#f0a83b]"
+                                className="w-full h-[42px] px-3.5 rounded-[8px] bg-[#f9fafb] border border-black/[0.12] text-[13.5px] text-left text-[#111827] cursor-pointer outline-none focus:border-[#f0a83b]"
                             >
-                                <option className="bg-[#161922]" value="">All Priority</option>
+                                <option className="bg-white text-[#111827]" value="">All Priority</option>
                                 {allPriorities.map((p) => (
-                                    <option className="bg-[#161922]" key={p} value={p}>{p}</option>
+                                    <option className="bg-white text-[#111827]" key={p} value={p}>{p}</option>
                                 ))}
                             </select>
                         </div>
@@ -196,7 +196,7 @@ function AdminBugs() {
                                 setStatusFilter("")
                                 setPriorityFilter("")
                             }}
-                            className="h-[42px] px-5 rounded-[8px] text-[13.5px] font-medium text-[#a8abb8] border border-white/10 hover:bg-white/[0.04] hover:text-white transition-colors cursor-pointer whitespace-nowrap"
+                            className="h-[42px] px-5 rounded-[8px] text-[13.5px] font-medium text-[#4b5563] border border-black/[0.12] hover:bg-black/[0.04] hover:text-[#111827] transition-colors cursor-pointer whitespace-nowrap"
                         >
                             Clear
                         </button>
@@ -205,7 +205,7 @@ function AdminBugs() {
 
 
                     {/* bugs table */}
-                    <div className="p-6 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+                    <div className="p-6 bg-white border border-black/[0.08] shadow-sm rounded-[14px]">
 
                         <BugsTable
                             bugs={currentBugs}
@@ -216,15 +216,15 @@ function AdminBugs() {
 
 
                         {/* pagination */}
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-6 border-t border-white/[0.06]">
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-6 border-t border-black/[0.08]">
 
-                            <p className="text-[13px] text-[#5b606c]">
+                            <p className="text-[13px] text-[#6b7280]">
                                 Showing{" "}
-                                <span className="text-white font-medium">{filteredBugs.length ? firstIndex + 1 : 0}</span>{" "}
+                                <span className="text-[#111827] font-medium">{filteredBugs.length ? firstIndex + 1 : 0}</span>{" "}
                                 to{" "}
-                                <span className="text-white font-medium">{Math.min(lastIndex, filteredBugs.length)}</span>{" "}
+                                <span className="text-[#111827] font-medium">{Math.min(lastIndex, filteredBugs.length)}</span>{" "}
                                 of{" "}
-                                <span className="text-white font-medium">{filteredBugs.length}</span>{" "}
+                                <span className="text-[#111827] font-medium">{filteredBugs.length}</span>{" "}
                                 bugs
                             </p>
 
@@ -234,7 +234,7 @@ function AdminBugs() {
                                     type="button"
                                     onClick={() => setCurrentPage(currentPage - 1)}
                                     disabled={currentPage === 1}
-                                    className="w-9 h-9 flex items-center justify-center rounded-[8px] border border-white/10 text-[#5b606c] disabled:cursor-not-allowed hover:bg-white/[0.04] cursor-pointer"
+                                    className="w-9 h-9 flex items-center justify-center rounded-[8px] border border-black/[0.12] text-[#6b7280] disabled:cursor-not-allowed hover:bg-black/[0.04] cursor-pointer"
                                 >
                                     &#10094;
                                 </button>
@@ -247,7 +247,7 @@ function AdminBugs() {
                                         className={`w-9 h-9 rounded-[8px] text-[13px] font-medium cursor-pointer transition-colors
                                             ${currentPage === index + 1
                                                 ? "bg-[#f0a83b] text-[#0d0f14]"
-                                                : "border border-white/10 text-[#5b606c] hover:bg-white/[0.04]"
+                                                : "border border-black/[0.12] text-[#6b7280] hover:bg-black/[0.04]"
                                             }`}
                                     >
                                         {index + 1}
@@ -258,7 +258,7 @@ function AdminBugs() {
                                     type="button"
                                     onClick={() => setCurrentPage(currentPage + 1)}
                                     disabled={currentPage === totalPages || totalPages === 0}
-                                    className="w-9 h-9 flex items-center justify-center rounded-[8px] border border-white/10 text-[#5b606c] disabled:cursor-not-allowed hover:bg-white/[0.04] cursor-pointer"
+                                    className="w-9 h-9 flex items-center justify-center rounded-[8px] border border-black/[0.12] text-[#6b7280] disabled:cursor-not-allowed hover:bg-black/[0.04] cursor-pointer"
                                 >
                                     &#10095;
                                 </button>

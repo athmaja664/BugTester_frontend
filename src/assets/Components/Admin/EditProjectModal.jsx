@@ -18,33 +18,33 @@ function MultiSelect({ label, placeholder, emptyText, options, selectedIds, onTo
 
     return (
         <div className="flex flex-col gap-2 relative" ref={ref}>
-            <label className="text-[12.5px] font-medium text-[#a8abb8]">{label}</label>
+            <label className="text-[12.5px] font-medium text-[#5b606c]">{label}</label>
 
             <button
                 type="button"
                 onClick={() => setOpen((prev) => !prev)}
-                className="w-full h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-left text-white cursor-pointer outline-none focus:border-[#f0a83b] flex items-center justify-between"
+                className="w-full h-[42px] px-3.5 rounded-[8px] bg-[#f7f8fa] border border-[#e3e6ec] text-[13.5px] text-left text-[#1a1d26] cursor-pointer outline-none focus:border-[#f0a83b] flex items-center justify-between"
             >
-                <span className={`truncate ${selectedIds.length === 0 ? "text-[#5b606c]" : "text-white"}`}>
+                <span className={`truncate ${selectedIds.length === 0 ? "text-[#9aa0ad]" : "text-[#1a1d26]"}`}>
                     {selectedIds.length === 0
                         ? placeholder
                         : options.filter((o) => selectedIds.includes(o.id)).map((o) => o.name).join(", ")
                     }
                 </span>
-                <span className="text-[#6a6f7b] text-xs ml-2 flex-shrink-0">
+                <span className="text-[#8a8f9c] text-xs ml-2 flex-shrink-0">
                     {open ? "▲" : "▼"}
                 </span>
             </button>
 
             {open && (
-                <div className="absolute top-full mt-1 left-0 right-0 z-10 bg-[#1c202b] border border-white/10 rounded-[8px] shadow-lg max-h-[180px] overflow-y-auto p-2">
+                <div className="absolute top-full mt-1 left-0 right-0 z-10 bg-white border border-[#e3e6ec] rounded-[8px] shadow-lg max-h-[180px] overflow-y-auto p-2">
                     {options.length === 0 && (
-                        <p className="text-[12.5px] text-[#5b606c] px-2 py-1">{emptyText}</p>
+                        <p className="text-[12.5px] text-[#9aa0ad] px-2 py-1">{emptyText}</p>
                     )}
                     {options.map((o) => (
                         <label
                             key={o.id}
-                            className="flex items-center gap-2 text-[13px] text-white px-2 py-2 rounded-[6px] cursor-pointer hover:bg-white/[0.05]"
+                            className="flex items-center gap-2 text-[13px] text-[#1a1d26] px-2 py-2 rounded-[6px] cursor-pointer hover:bg-[#f3f4f7]"
                         >
                             <input
                                 type="checkbox"
@@ -169,16 +169,16 @@ function EditProjectModal({ project, onClose, getProjects }) {
     }
 
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999] px-4">
-            <div className="bg-[#161922] border border-white/[0.08] rounded-[16px] shadow-lg w-full max-w-[720px] max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[999] px-4">
+            <div className="bg-white border border-[#e3e6ec] rounded-[16px] shadow-2xl w-full max-w-[720px] max-h-[90vh] overflow-y-auto">
 
                 {/* header */}
-                <div className="flex items-center justify-between px-7 pt-7 pb-5 border-b border-white/[0.06]">
-                    <h3 className="text-lg font-semibold text-white">Edit Project</h3>
+                <div className="flex items-center justify-between px-7 pt-7 pb-5 border-b border-[#eceef2]">
+                    <h3 className="text-lg font-semibold text-[#1a1d26]">Edit Project</h3>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-[8px] text-[#5b606c] hover:bg-white/[0.04] hover:text-white transition-colors cursor-pointer"
+                        className="w-8 h-8 flex items-center justify-center rounded-[8px] text-[#8a8f9c] hover:bg-black/[0.05] hover:text-[#1a1d26] transition-colors cursor-pointer"
                     >
                         <AiOutlineClose size={16} />
                     </button>
@@ -189,69 +189,69 @@ function EditProjectModal({ project, onClose, getProjects }) {
 
                     {/* LEFT column */}
                     <div className="flex flex-col gap-5">
-                        <p className="text-xs font-semibold text-[#f0a83b] uppercase tracking-wide">
+                        <p className="text-xs font-semibold text-[#c98410] uppercase tracking-wide">
                             Project Details
                         </p>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">Project Name</label>
+                            <label className="text-[12.5px] font-medium text-[#5b606c]">Project Name</label>
                             <input
                                 type="text"
                                 name="name"
                                 value={projectData.name}
                                 onChange={handleChange}
                                 placeholder="e.g. E-Commerce Website"
-                                className="h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
+                                className="h-[42px] px-3.5 rounded-[8px] bg-[#f7f8fa] border border-[#e3e6ec] text-[13.5px] text-[#1a1d26] placeholder:text-[#9aa0ad] outline-none focus:border-[#f0a83b] focus:bg-white transition-colors"
                             />
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">Description</label>
+                            <label className="text-[12.5px] font-medium text-[#5b606c]">Description</label>
                             <textarea
                                 name="description"
                                 value={projectData.description}
                                 onChange={handleChange}
                                 placeholder="What is this project about?"
                                 rows={4}
-                                className="px-3.5 py-2.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors resize-none"
+                                className="px-3.5 py-2.5 rounded-[8px] bg-[#f7f8fa] border border-[#e3e6ec] text-[13.5px] text-[#1a1d26] placeholder:text-[#9aa0ad] outline-none focus:border-[#f0a83b] focus:bg-white transition-colors resize-none"
                             />
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">Status</label>
+                            <label className="text-[12.5px] font-medium text-[#5b606c]">Status</label>
                             <select
                                 name="status"
                                 value={projectData.status}
                                 onChange={handleChange}
-                                className="w-full h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-left text-white cursor-pointer outline-none focus:border-[#f0a83b]"
+                                className="w-full h-[42px] px-3.5 rounded-[8px] bg-[#f7f8fa] border border-[#e3e6ec] text-[13.5px] text-left text-[#1a1d26] cursor-pointer outline-none focus:border-[#f0a83b]"
                             >
-                                <option className="bg-[#161922]" value="Planning">Planning</option>
-                                <option className="bg-[#161922]" value="In Progress">In Progress</option>
-                                <option className="bg-[#161922]" value="Completed">Completed</option>
-                                <option className="bg-[#161922]" value="On Hold">On Hold</option>
+                                <option className="bg-white" value="Planning">Planning</option>
+                                <option className="bg-white" value="In Progress">In Progress</option>
+                                <option className="bg-white" value="Completed">Completed</option>
+                                <option className="bg-white" value="On Hold">On Hold</option>
                             </select>
                         </div>
 
                         <div className="flex gap-4 max-[400px]:flex-col">
                             <div className="flex flex-col gap-2 flex-1 min-w-0">
-                                <label className="text-[12.5px] font-medium text-[#a8abb8]">Start Date</label>
+                                <label className="text-[12.5px] font-medium text-[#5b606c]">Start Date</label>
                                 <input
                                     type="date"
                                     name="start_date"
                                     value={projectData.start_date}
                                     onChange={handleChange}
-                                    className="h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white outline-none focus:border-[#f0a83b] transition-colors"
+                                    className="h-[42px] px-3.5 rounded-[8px] bg-[#f7f8fa] border border-[#e3e6ec] text-[13.5px] text-[#1a1d26] outline-none focus:border-[#f0a83b] focus:bg-white transition-colors"
                                 />
                             </div>
 
                             <div className="flex flex-col gap-2 flex-1 min-w-0">
-                                <label className="text-[12.5px] font-medium text-[#a8abb8]">Due Date</label>
+                                <label className="text-[12.5px] font-medium text-[#5b606c]">Due Date</label>
                                 <input
                                     type="date"
                                     name="due_date"
                                     value={projectData.due_date}
                                     onChange={handleChange}
-                                    className="h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white outline-none focus:border-[#f0a83b] transition-colors"
+                                    className="h-[42px] px-3.5 rounded-[8px] bg-[#f7f8fa] border border-[#e3e6ec] text-[13.5px] text-[#1a1d26] outline-none focus:border-[#f0a83b] focus:bg-white transition-colors"
                                 />
                             </div>
                         </div>
@@ -259,20 +259,20 @@ function EditProjectModal({ project, onClose, getProjects }) {
 
                     {/* RIGHT column */}
                     <div className="flex flex-col gap-5">
-                        <p className="text-xs font-semibold text-[#f0a83b] uppercase tracking-wide">
+                        <p className="text-xs font-semibold text-[#c98410] uppercase tracking-wide">
                             Team
                         </p>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-[12.5px] font-medium text-[#a8abb8]">Lead</label>
+                            <label className="text-[12.5px] font-medium text-[#5b606c]">Lead</label>
                             <select
                                 value={lead_id}
                                 onChange={(e) => setLeadId(e.target.value)}
-                                className="w-full h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-left text-white cursor-pointer outline-none focus:border-[#f0a83b]"
+                                className="w-full h-[42px] px-3.5 rounded-[8px] bg-[#f7f8fa] border border-[#e3e6ec] text-[13.5px] text-left text-[#1a1d26] cursor-pointer outline-none focus:border-[#f0a83b]"
                             >
-                                <option className="bg-[#161922]" value="">No lead assigned</option>
+                                <option className="bg-white" value="">No lead assigned</option>
                                 {leads.map((item) => (
-                                    <option className="bg-[#161922]" key={item.id} value={item.id}>
+                                    <option className="bg-white" key={item.id} value={item.id}>
                                         {item.name}
                                     </option>
                                 ))}
@@ -301,11 +301,11 @@ function EditProjectModal({ project, onClose, getProjects }) {
                 </div>
 
                 {/* footer */}
-                <div className="flex items-center justify-center gap-3 px-7 py-5 border-t border-white/[0.06]">
+                <div className="flex items-center justify-center gap-3 px-7 py-5 border-t border-[#eceef2]">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="h-[44px] px-5 text-sm font-medium text-[#a8abb8] hover:text-white cursor-pointer"
+                        className="h-[44px] px-5 text-sm font-medium text-[#5b606c] hover:text-[#1a1d26] cursor-pointer"
                     >
                         Cancel
                     </button>

@@ -55,7 +55,7 @@ function Login() {
       className="min-h-screen font-['DM_Sans',sans-serif] relative overflow-hidden"
       style={{
         background:
-          "radial-gradient(ellipse 900px 600px at 15% 10%, rgba(240,168,59,0.10), transparent 60%), radial-gradient(ellipse 900px 700px at 85% 90%, rgba(87,106,255,0.14), transparent 60%), #0d0f14",
+          "radial-gradient(ellipse 900px 600px at 15% 10%, rgba(240,168,59,0.14), transparent 60%), radial-gradient(ellipse 900px 700px at 85% 90%, rgba(87,106,255,0.10), transparent 60%), #f6f7fa",
       }}
     >
       {/* ambient grid texture */}
@@ -63,7 +63,7 @@ function Login() {
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
         style={{
           backgroundImage:
-            "linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)",
+            "linear-gradient(#1a1d26 1px, transparent 1px), linear-gradient(90deg, #1a1d26 1px, transparent 1px)",
           backgroundSize: "44px 44px",
         }}
       />
@@ -78,15 +78,15 @@ function Login() {
             <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#f0a83b]">
               <FaBug className="w-[18px] h-[18px] text-[#0d0f14]" />
             </span>
-            <span className="text-[19px] font-bold tracking-tight text-white">
+            <span className="text-[19px] font-bold tracking-tight text-[#1a1d26]">
               BugTester
             </span>
           </a>
 
           {/* status pill (design only) */}
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/[0.04] border border-white/10 max-[400px]:px-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80]" />
-            <span className="text-[13px] font-medium text-[#a8abb8]">
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white border border-[#e3e6ec] shadow-sm max-[400px]:px-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e]" />
+            <span className="text-[13px] font-medium text-[#5b606c]">
               All systems tracked
             </span>
           </div>
@@ -103,14 +103,14 @@ function Login() {
             >
               <h1
                 id="hero-title"
-                className="mb-[26px] text-[46px] font-bold tracking-[-1.38px] leading-normal text-white"
+                className="mb-[26px] text-[46px] font-bold tracking-[-1.38px] leading-normal text-[#1a1d26]"
               >
                 Track every bug from report to close
               </h1>
 
               {/* project note */}
-              <div className="mt-10 max-w-[400px] px-4 py-4 rounded-[8px] bg-white/[0.03] border border-white/[0.06]">
-                <p className="text-sm font-medium text-[#a8abb8] mb-1">
+              <div className="mt-10 max-w-[400px] px-4 py-4 rounded-[8px] bg-white border border-[#e3e6ec] shadow-sm">
+                <p className="text-sm font-medium text-[#3a3f4b] mb-1">
                   One place for your entire QA workflow
                 </p>
                 <p className="text-xs leading-5 text-[#6a6f7b]">
@@ -124,7 +124,7 @@ function Login() {
                 {[
                   { label: "Reported", color: "#6b7280" },
                   { label: "In Progress", color: "#f0a83b" },
-                  { label: "Verified", color: "#4ade80" },
+                  { label: "Verified", color: "#22c55e" },
                 ].map((step, i, arr) => (
                   <div key={step.label} className="flex items-center gap-4">
                     <div className="flex flex-col items-center">
@@ -132,9 +132,9 @@ function Login() {
                         className="w-2.5 h-2.5 rounded-full shrink-0"
                         style={{ background: step.color, boxShadow: `0 0 0 4px ${step.color}22` }}
                       />
-                      {i < arr.length - 1 && <span className="w-px h-10 bg-white/10" />}
+                      {i < arr.length - 1 && <span className="w-px h-10 bg-black/10" />}
                     </div>
-                    <span className="pb-10 text-[14px] font-mono text-[#c7c9d1]">
+                    <span className="pb-10 text-[14px] font-mono text-[#3a3f4b]">
                       {step.label}
                     </span>
                   </div>
@@ -144,26 +144,26 @@ function Login() {
 
             {/* form */}
             <section
-              className="flex flex-col items-start self-center flex-[0_0_585px] w-[585px] max-w-full h-[589px] px-[46px] pt-[65px] pb-[87px] bg-[#161922] border border-white/[0.06] rounded-[14px] shadow-[0_8px_40px_rgba(0,0,0,0.35)] max-[1200px]:flex-none max-[1200px]:w-full max-[1200px]:max-w-[585px] max-[1200px]:h-auto max-[640px]:px-7 max-[640px]:py-12 max-[400px]:px-5 max-[400px]:py-9"
+              className="flex flex-col items-start self-center flex-[0_0_585px] w-[585px] max-w-full h-[589px] px-[46px] pt-[65px] pb-[87px] bg-white border border-[#e3e6ec] rounded-[14px] shadow-[0_8px_40px_rgba(26,29,38,0.08)] max-[1200px]:flex-none max-[1200px]:w-full max-[1200px]:max-w-[585px] max-[1200px]:h-auto max-[640px]:px-7 max-[640px]:py-12 max-[400px]:px-5 max-[400px]:py-9"
               aria-labelledby="login-title"
             >
               <h2
                 id="login-title"
-                className="self-stretch mb-9 text-[26px] font-semibold leading-normal text-white text-center after:content-[''] after:block after:w-16 after:h-[3px] after:mt-[10px] after:mx-auto after:bg-[#f0a83b] after:rounded-[2px] max-[400px]:text-2xl max-[400px]:mb-7"
+                className="self-stretch mb-9 text-[26px] font-semibold leading-normal text-[#1a1d26] text-center after:content-[''] after:block after:w-16 after:h-[3px] after:mt-[10px] after:mx-auto after:bg-[#f0a83b] after:rounded-[2px] max-[400px]:text-2xl max-[400px]:mb-7"
               >
                 Sign in
               </h2>
 
               <div className="flex flex-col items-start self-stretch w-full gap-[10px]">
-                <label className="block text-lg font-medium leading-normal text-[#a8abb8] max-[400px]:text-base" htmlFor="email">
+                <label className="block text-lg font-medium leading-normal text-[#5b606c] max-[400px]:text-base" htmlFor="email">
                   Email
                 </label>
-                <div className="flex items-center gap-[10px] h-[54px] px-[14px] w-full bg-white/[0.03] border border-white/10 rounded-[4px] transition-colors focus-within:border-[#f0a83b]">
-                  <span className="flex-none w-5 h-5 text-[#6a6f7b]" aria-hidden="true">
+                <div className="flex items-center gap-[10px] h-[54px] px-[14px] w-full bg-[#f7f8fa] border border-[#e3e6ec] rounded-[4px] transition-colors focus-within:border-[#f0a83b] focus-within:bg-white">
+                  <span className="flex-none w-5 h-5 text-[#8a8f9c]" aria-hidden="true">
                     <HiOutlineMail className="w-5 h-5" />
                   </span>
                   <input
-                    className="flex-1 w-full min-w-0 h-full text-base font-normal text-white bg-transparent border-none outline-none placeholder:font-medium placeholder:text-[#5b606c]"
+                    className="flex-1 w-full min-w-0 h-full text-base font-normal text-[#1a1d26] bg-transparent border-none outline-none placeholder:font-medium placeholder:text-[#9aa0ad]"
                     type="text"
                     id="email"
                     name="email"
@@ -176,15 +176,15 @@ function Login() {
               </div>
 
               <div className="flex flex-col items-start self-stretch w-full gap-[10px] mt-[34px]">
-                <label className="block text-lg font-medium leading-normal text-[#a8abb8] max-[400px]:text-base" htmlFor="password">
+                <label className="block text-lg font-medium leading-normal text-[#5b606c] max-[400px]:text-base" htmlFor="password">
                   Password
                 </label>
-                <div className="flex items-center gap-[10px] h-[54px] px-[14px] w-full bg-white/[0.03] border border-white/10 rounded-[4px] transition-colors focus-within:border-[#f0a83b]">
-                  <span className="flex-none w-5 h-5 text-[#6a6f7b]" aria-hidden="true">
+                <div className="flex items-center gap-[10px] h-[54px] px-[14px] w-full bg-[#f7f8fa] border border-[#e3e6ec] rounded-[4px] transition-colors focus-within:border-[#f0a83b] focus-within:bg-white">
+                  <span className="flex-none w-5 h-5 text-[#8a8f9c]" aria-hidden="true">
                     <HiOutlineLockClosed className="w-5 h-5" />
                   </span>
                   <input
-                    className="flex-1 w-full min-w-0 h-full text-base font-normal text-white bg-transparent border-none outline-none placeholder:font-medium placeholder:text-[#5b606c]"
+                    className="flex-1 w-full min-w-0 h-full text-base font-normal text-[#1a1d26] bg-transparent border-none outline-none placeholder:font-medium placeholder:text-[#9aa0ad]"
                     type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
@@ -194,7 +194,7 @@ function Login() {
                     onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                   />
                   <span
-                    className="text-[#6a6f7b] ml-2 cursor-pointer hover:text-[#a8abb8]"
+                    className="text-[#8a8f9c] ml-2 cursor-pointer hover:text-[#1a1d26]"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
