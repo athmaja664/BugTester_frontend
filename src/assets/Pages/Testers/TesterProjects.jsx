@@ -1,661 +1,250 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import TesterSidebar from "../../Components/Tester/TesterSidebar";
+import TesterReportBugModal from "../../Components/Tester/TesterReportBugModal";
 import { AiOutlineSearch, AiOutlineProject } from "react-icons/ai";
 import { BsBug } from "react-icons/bs";
-import {
-  FiArrowUpRight,
-  FiCheckSquare,
-  FiClock,
-} from "react-icons/fi";
+import { FiCheckSquare, FiClock } from "react-icons/fi";
 import { HiOutlineCalendar } from "react-icons/hi";
+import toast from "react-hot-toast";
+import { getMyProjectsAPI, getBugsAPI } from "../../../../services/allAPI";
+
+const statusColors = {
+    "Planning": "bg-white/[0.05] text-[#8b909c] border-white/10",
+    "In Progress": "bg-[#8b98ff]/[0.12] text-[#8b98ff] border-[#8b98ff]/20",
+    "Completed": "bg-[#4ade80]/[0.12] text-[#4ade80] border-[#4ade80]/20",
+    "On Hold": "bg-[#c084fc]/[0.12] text-[#c084fc] border-[#c084fc]/20",
+}
 
 function TesterProjects() {
-  return (
-    <div className="flex min-h-screen bg-[#0d0f14]">
+    const [projects, setProjects] = useState([])
+    const [bugs, setBugs] = useState([])
+    const [searchTerm, setSearchTerm] = useState("")
+    const [statusFilter, setStatusFilter] = useState("")
+    const [showReportModal, setShowReportModal] = useState(false)
+    const [reportProjectId, setReportProjectId] = useState(null)
+    const token = localStorage.getItem('token')
 
-      <TesterSidebar />
+    const getProjects = async () => {
+        try {
+            const reqHeader = { Authorization: `Bearer ${token}` }
+            const response = await getMyProjectsAPI(reqHeader)
+            if (response.status === 200) {
+                setProjects(response.data.projects)
+            }
+        } catch (err) {
+            toast.error(err?.response?.data?.message || 'Failed to fetch projects')
+        }
+    }
 
-      {/* Right Column */}
-      <div className="flex-1 flex flex-col min-w-0">
+    const getBugs = async () => {
+        try {
+            const reqHeader = { Authorization: `Bearer ${token}` }
+            const response = await getBugsAPI(reqHeader)
+            if (response.status === 200) {
+                setBugs(response.data)
+            }
+        } catch (err) {
+            toast.error(err?.response?.data?.message || 'Failed to fetch bugs')
+        }
+    }
 
-        {/* Header */}
-        <div className="sticky top-0 z-20 flex items-center justify-between gap-4 h-[72px] px-5 lg:px-8 bg-[#0d0f14]/95 backdrop-blur border-b border-white/[0.06]">
+    useEffect(() => {
+        getProjects()
+        getBugs()
+    }, [])
 
-          <h1 className="text-[18px] font-semibold text-white pl-14 lg:pl-0">
-            Projects
-          </h1>
+    const handleReportBug = (projectId) => {
+        setReportProjectId(projectId)
+        setShowReportModal(true)
+    }
 
-          <div className="flex items-center gap-4">
+    const totalProjects = projects.length
+    const inProgressCount = projects.filter((p) => p.status === 'In Progress' || p.status === 'Planning').length
+    const completedCount = projects.filter((p) => p.status === 'Completed').length
 
-            {/* Search */}
-            <div className="hidden sm:flex items-center gap-2 h-[40px] px-3.5 w-[240px] bg-white/[0.03] border border-white/10 rounded-[8px] focus-within:border-[#f0a83b]">
+    const filteredProjects = projects.filter((item) => {
+        const matchesSearch = item.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        const matchesStatus = statusFilter ? item.status === statusFilter : true
+        return matchesSearch && matchesStatus
+    })
 
-              <AiOutlineSearch
-                className="text-[#5b606c]"
-                size={17}
-              />
+    return (
+        <div className="flex min-h-screen bg-[#0d0f14]">
 
-              <input
-                type="text"
-                placeholder="Search projects..."
-                className="flex-1 w-full bg-transparent border-none outline-none text-[13.5px] text-white placeholder:text-[#5b606c]"
-              />
+            <TesterSidebar />
 
-            </div>
+            <div className="flex-1 flex flex-col min-w-0">
 
-            {/* Tester */}
-            <div className="flex items-center gap-2.5 pl-2 pr-1 sm:pr-3 h-10 rounded-[8px] hover:bg-white/[0.04] cursor-pointer">
+                {/* Header */}
+                <div className="sticky top-0 z-20 flex items-center justify-between gap-4 h-[72px] px-5 lg:px-8 bg-[#0d0f14]/95 backdrop-blur border-b border-white/[0.06]">
 
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.06] text-[#c7c9d1] text-[12.5px] font-semibold">
-                TS
-              </span>
+                    <h1 className="text-[18px] font-semibold text-white pl-14 lg:pl-0">
+                        Projects
+                    </h1>
 
-              <span className="hidden sm:block text-[13.5px] font-medium text-white">
-                Tester
-              </span>
+                </div>
 
-            </div>
+                {/* Main Content */}
+                <div className="flex-1 p-5 lg:p-8">
 
-          </div>
-        </div>
+                    <div className="mb-8">
+                        <h1 className="text-[22px] font-semibold text-white">My Projects</h1>
+                        <p className="text-[14px] text-[#8b909c] mt-1">
+                            View and test the projects assigned to you
+                        </p>
+                    </div>
 
-        {/* Main Content */}
-        <div className="flex-1 p-5 lg:p-8">
+                    {/* Summary cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
 
-          {/* Page Header */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+                        <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+                            <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#f0a83b]/[0.12] text-[#f0a83b] mb-4">
+                                <AiOutlineProject size={18} />
+                            </span>
+                            <p className="text-[24px] font-semibold text-white">{totalProjects}</p>
+                            <p className="text-[13px] text-[#8b909c] mt-1">Assigned Projects</p>
+                        </div>
 
-            <div>
-              <h1 className="text-[22px] font-semibold text-white">
-                My Projects
-              </h1>
+                        <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+                            <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#8b98ff]/[0.12] text-[#8b98ff] mb-4">
+                                <FiClock size={18} />
+                            </span>
+                            <p className="text-[24px] font-semibold text-white">{inProgressCount}</p>
+                            <p className="text-[13px] text-[#8b909c] mt-1">In Progress</p>
+                        </div>
 
-              <p className="text-[14px] text-[#8b909c] mt-1">
-                View and test the projects assigned to you.
-              </p>
-            </div>
-
-            {/* Project Count */}
-            <div className="flex items-center gap-2 px-3.5 h-[38px] rounded-[8px] bg-white/[0.03] border border-white/[0.06]">
-
-              <AiOutlineProject
-                size={16}
-                className="text-[#f0a83b]"
-              />
-
-              <span className="text-[13px] text-[#a8abb8]">
-                4 Assigned Projects
-              </span>
-
-            </div>
-
-          </div>
-
-          {/* Summary Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-
-            {/* Assigned */}
-            <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-
-              <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#f0a83b]/[0.12] text-[#f0a83b] mb-4">
-                <AiOutlineProject size={18} />
-              </span>
-
-              <p className="text-[24px] font-semibold text-white">
-                4
-              </p>
-
-              <p className="text-[13px] text-[#8b909c] mt-1">
-                Assigned Projects
-              </p>
-
-            </div>
-
-            {/* Active */}
-            <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-
-              <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#8b98ff]/[0.12] text-[#8b98ff] mb-4">
-                <FiClock size={18} />
-              </span>
-
-              <p className="text-[24px] font-semibold text-white">
-                3
-              </p>
-
-              <p className="text-[13px] text-[#8b909c] mt-1">
-                Projects In Testing
-              </p>
-
-            </div>
-
-            {/* Completed */}
-            <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-
-              <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#4ade80]/[0.12] text-[#4ade80] mb-4">
-                <FiCheckSquare size={18} />
-              </span>
-
-              <p className="text-[24px] font-semibold text-white">
-                1
-              </p>
-
-              <p className="text-[13px] text-[#8b909c] mt-1">
-                Completed Testing
-              </p>
-
-            </div>
-
-          </div>
-
-          {/* Projects Section */}
-          <div className="p-6 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-
-            {/* Section Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-
-              <div>
-                <h2 className="text-[16px] font-semibold text-white">
-                  Assigned Projects
-                </h2>
-
-                <p className="text-[12.5px] text-[#5b606c] mt-1">
-                  Projects currently assigned for testing
-                </p>
-              </div>
-
-              {/* Filter */}
-              <select
-                className="h-[38px] px-3 rounded-[8px] bg-[#0d0f14] border border-white/10 text-[13px] text-[#a8abb8] outline-none focus:border-[#f0a83b] cursor-pointer"
-              >
-                <option>All Projects</option>
-                <option>In Testing</option>
-                <option>Completed</option>
-                <option>Pending</option>
-              </select>
-
-            </div>
-
-            {/* ================================================= */}
-            {/* Project Card 1 */}
-            {/* ================================================= */}
-
-            <div className="p-5 rounded-[12px] bg-white/[0.02] border border-white/[0.06] mb-4">
-
-              {/* Top Section */}
-              <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
-
-                <div className="flex items-start gap-4">
-
-                  {/* Project Icon */}
-                  <span className="flex items-center justify-center w-11 h-11 rounded-[9px] bg-[#f0a83b]/[0.12] text-[#f0a83b] shrink-0">
-                    <AiOutlineProject size={20} />
-                  </span>
-
-                  {/* Project Information */}
-                  <div>
-
-                    <div className="flex flex-wrap items-center gap-2">
-
-                      <h3 className="text-[15px] font-semibold text-white">
-                        E-Commerce Platform
-                      </h3>
-
-                      <span className="px-2.5 py-1 rounded-[5px] text-[10.5px] font-medium bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/20">
-                        In Testing
-                      </span>
+                        <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+                            <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#4ade80]/[0.12] text-[#4ade80] mb-4">
+                                <FiCheckSquare size={18} />
+                            </span>
+                            <p className="text-[24px] font-semibold text-white">{completedCount}</p>
+                            <p className="text-[13px] text-[#8b909c] mt-1">Completed</p>
+                        </div>
 
                     </div>
 
-                    <p className="text-[12.5px] text-[#5b606c] mt-1">
-                      Web Application
-                    </p>
+                    {/* Projects section */}
+                    <div className="p-6 bg-[#161922] border border-white/[0.06] rounded-[14px]">
 
-                    <p className="text-[13px] text-[#8b909c] mt-3 leading-relaxed">
-                      Customer shopping and online payment platform.
-                    </p>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                            <div>
+                                <h2 className="text-[16px] font-semibold text-white">Assigned Projects</h2>
+                                <p className="text-[12.5px] text-[#5b606c] mt-1">
+                                    Projects currently assigned for testing
+                                </p>
+                            </div>
 
-                  </div>
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2 h-[38px] px-3.5 w-full sm:w-[200px] bg-white/[0.03] border border-white/10 rounded-[8px] focus-within:border-[#f0a83b]">
+                                    <AiOutlineSearch className="text-[#5b606c]" size={16} />
+                                    <input
+                                        type="text"
+                                        placeholder="Search projects..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="flex-1 bg-transparent border-none outline-none text-[13px] text-white placeholder:text-[#5b606c]"
+                                    />
+                                </div>
 
-                </div>
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    className="h-[38px] px-3 rounded-[8px] bg-[#0d0f14] border border-white/10 text-[13px] text-[#a8abb8] outline-none focus:border-[#f0a83b] cursor-pointer"
+                                >
+                                    <option value="">All Status</option>
+                                    <option value="Planning">Planning</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="On Hold">On Hold</option>
+                                </select>
+                            </div>
+                        </div>
 
-                {/* View Project */}
-                <button
-                  type="button"
-                  className="flex items-center justify-center gap-1.5 h-[38px] px-4 rounded-[8px] text-[12.5px] font-medium text-[#f0a83b] border border-[#f0a83b]/20 hover:bg-[#f0a83b]/[0.08] transition-colors cursor-pointer shrink-0"
-                >
-                  View Project
-                  <FiArrowUpRight size={14} />
-                </button>
+                        {filteredProjects.length === 0 ? (
+                            <div className="py-8 text-center text-[13.5px] text-[#5b606c]">
+                                No projects assigned yet
+                            </div>
+                        ) : (
+                            filteredProjects.map((item) => {
+                                const reportedCount = bugs.filter((b) => b.project_id === item.id).length
 
-              </div>
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className="p-5 rounded-[12px] bg-white/[0.02] border border-white/[0.06] mb-4 last:mb-0"
+                                    >
+                                        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
 
-              {/* Testing Progress Card */}
-              <div className="mt-5 p-4 rounded-[10px] bg-[#0d0f14] border border-white/[0.06]">
+                                            <div className="flex items-start gap-4">
+                                                <span className="flex items-center justify-center w-11 h-11 rounded-[9px] bg-[#f0a83b]/[0.12] text-[#f0a83b] shrink-0">
+                                                    <AiOutlineProject size={20} />
+                                                </span>
 
-                <div className="flex items-center justify-between">
+                                                <div>
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <h3 className="text-[15px] font-semibold text-white">
+                                                            {item.name}
+                                                        </h3>
+                                                        <span className={`px-2.5 py-1 rounded-[5px] text-[10.5px] font-medium border ${statusColors[item.status] || "bg-white/[0.05] text-[#8b909c] border-white/10"}`}>
+                                                            {item.status}
+                                                        </span>
+                                                    </div>
 
-                  <div>
-                    <p className="text-[12px] text-[#8b909c]">
-                      Testing Progress
-                    </p>
+                                                    {item.description && (
+                                                        <p className="text-[13px] text-[#8b909c] mt-3 leading-relaxed">
+                                                            {item.description}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
 
-                    <p className="text-[20px] font-semibold text-white mt-1">
-                      72%
-                    </p>
-                  </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleReportBug(item.id)}
+                                                className="flex items-center justify-center gap-1.5 h-[38px] px-4 rounded-[8px] text-[12.5px] font-semibold text-[#0d0f14] bg-[#f0a83b] hover:bg-[#f5bc6b] transition-colors cursor-pointer shrink-0"
+                                            >
+                                                <BsBug size={14} />
+                                                Report Bug
+                                            </button>
 
-                  <div className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#f0a83b]/[0.12] text-[#f0a83b]">
-                    <FiCheckSquare size={18} />
-                  </div>
+                                        </div>
 
-                </div>
+                                        <div className="flex flex-wrap items-center gap-5 mt-5 pt-4 border-t border-white/[0.06]">
 
-              </div>
+                                            <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
+                                                <BsBug size={14} />
+                                                {reportedCount} bugs reported
+                                            </span>
 
-              {/* Project Details */}
-              <div className="flex flex-wrap items-center gap-5 mt-5 pt-4 border-t border-white/[0.06]">
+                                            <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
+                                                <HiOutlineCalendar size={14} />
+                                                Due {item.due_date ? new Date(item.due_date).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) : "—"}
+                                            </span>
 
-                <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
-                  <BsBug size={14} />
-                  12 Bugs
-                </span>
-
-                <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
-                  <FiCheckSquare size={14} />
-                  36 Tests
-                </span>
-
-                <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
-                  <HiOutlineCalendar size={14} />
-                  Aug 25, 2026
-                </span>
-
-              </div>
-
-            </div>
-
-            {/* ================================================= */}
-            {/* Project Card 2 */}
-            {/* ================================================= */}
-
-            <div className="p-5 rounded-[12px] bg-white/[0.02] border border-white/[0.06] mb-4">
-
-              {/* Top Section */}
-              <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
-
-                <div className="flex items-start gap-4">
-
-                  {/* Project Icon */}
-                  <span className="flex items-center justify-center w-11 h-11 rounded-[9px] bg-[#8b98ff]/[0.12] text-[#8b98ff] shrink-0">
-                    <AiOutlineProject size={20} />
-                  </span>
-
-                  {/* Project Information */}
-                  <div>
-
-                    <div className="flex flex-wrap items-center gap-2">
-
-                      <h3 className="text-[15px] font-semibold text-white">
-                        Banking Dashboard
-                      </h3>
-
-                      <span className="px-2.5 py-1 rounded-[5px] text-[10.5px] font-medium bg-[#8b98ff]/[0.12] text-[#8b98ff] border border-[#8b98ff]/20">
-                        In Testing
-                      </span>
-
-                    </div>
-
-                    <p className="text-[12.5px] text-[#5b606c] mt-1">
-                      Admin Portal
-                    </p>
-
-                    <p className="text-[13px] text-[#8b909c] mt-3 leading-relaxed">
-                      Banking administration and account management portal.
-                    </p>
-
-                  </div>
-
-                </div>
-
-                {/* View Project */}
-                <button
-                  type="button"
-                  className="flex items-center justify-center gap-1.5 h-[38px] px-4 rounded-[8px] text-[12.5px] font-medium text-[#f0a83b] border border-[#f0a83b]/20 hover:bg-[#f0a83b]/[0.08] transition-colors cursor-pointer shrink-0"
-                >
-                  View Project
-                  <FiArrowUpRight size={14} />
-                </button>
-
-              </div>
-
-              {/* Testing Progress Card */}
-              <div className="mt-5 p-4 rounded-[10px] bg-[#0d0f14] border border-white/[0.06]">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-                    <p className="text-[12px] text-[#8b909c]">
-                      Testing Progress
-                    </p>
-
-                    <p className="text-[20px] font-semibold text-white mt-1">
-                      54%
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#8b98ff]/[0.12] text-[#8b98ff]">
-                    <FiCheckSquare size={18} />
-                  </div>
-
-                </div>
-
-              </div>
-
-              {/* Project Details */}
-              <div className="flex flex-wrap items-center gap-5 mt-5 pt-4 border-t border-white/[0.06]">
-
-                <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
-                  <BsBug size={14} />
-                  8 Bugs
-                </span>
-
-                <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
-                  <FiCheckSquare size={14} />
-                  28 Tests
-                </span>
-
-                <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
-                  <HiOutlineCalendar size={14} />
-                  Sep 02, 2026
-                </span>
-
-              </div>
-
-            </div>
-
-            {/* ================================================= */}
-            {/* Project Card 3 */}
-            {/* ================================================= */}
-
-            <div className="p-5 rounded-[12px] bg-white/[0.02] border border-white/[0.06] mb-4">
-
-              {/* Top Section */}
-              <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
-
-                <div className="flex items-start gap-4">
-
-                  {/* Project Icon */}
-                  <span className="flex items-center justify-center w-11 h-11 rounded-[9px] bg-[#4ade80]/[0.12] text-[#4ade80] shrink-0">
-                    <AiOutlineProject size={20} />
-                  </span>
-
-                  {/* Project Information */}
-                  <div>
-
-                    <div className="flex flex-wrap items-center gap-2">
-
-                      <h3 className="text-[15px] font-semibold text-white">
-                        Travel Booking App
-                      </h3>
-
-                      <span className="px-2.5 py-1 rounded-[5px] text-[10.5px] font-medium bg-[#4ade80]/[0.12] text-[#4ade80] border border-[#4ade80]/20">
-                        Completed
-                      </span>
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        )}
 
                     </div>
 
-                    <p className="text-[12.5px] text-[#5b606c] mt-1">
-                      Mobile & Web Application
-                    </p>
-
-                    <p className="text-[13px] text-[#8b909c] mt-3 leading-relaxed">
-                      Travel planning, booking, and reservation application.
-                    </p>
-
-                  </div>
-
                 </div>
-
-                {/* View Project */}
-                <button
-                  type="button"
-                  className="flex items-center justify-center gap-1.5 h-[38px] px-4 rounded-[8px] text-[12.5px] font-medium text-[#f0a83b] border border-[#f0a83b]/20 hover:bg-[#f0a83b]/[0.08] transition-colors cursor-pointer shrink-0"
-                >
-                  View Project
-                  <FiArrowUpRight size={14} />
-                </button>
-
-              </div>
-
-              {/* Testing Progress Card */}
-              <div className="mt-5 p-4 rounded-[10px] bg-[#0d0f14] border border-white/[0.06]">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-                    <p className="text-[12px] text-[#8b909c]">
-                      Testing Progress
-                    </p>
-
-                    <p className="text-[20px] font-semibold text-white mt-1">
-                      100%
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#4ade80]/[0.12] text-[#4ade80]">
-                    <FiCheckSquare size={18} />
-                  </div>
-
-                </div>
-
-              </div>
-
-              {/* Project Details */}
-              <div className="flex flex-wrap items-center gap-5 mt-5 pt-4 border-t border-white/[0.06]">
-
-                <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
-                  <BsBug size={14} />
-                  5 Bugs
-                </span>
-
-                <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
-                  <FiCheckSquare size={14} />
-                  42 Tests
-                </span>
-
-                <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
-                  <HiOutlineCalendar size={14} />
-                  Jul 18, 2026
-                </span>
-
-              </div>
-
             </div>
 
-            {/* ================================================= */}
-            {/* Project Card 4 */}
-            {/* ================================================= */}
-
-            <div className="p-5 rounded-[12px] bg-white/[0.02] border border-white/[0.06]">
-
-              {/* Top Section */}
-              <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
-
-                <div className="flex items-start gap-4">
-
-                  {/* Project Icon */}
-                  <span className="flex items-center justify-center w-11 h-11 rounded-[9px] bg-[#c084fc]/[0.12] text-[#c084fc] shrink-0">
-                    <AiOutlineProject size={20} />
-                  </span>
-
-                  {/* Project Information */}
-                  <div>
-
-                    <div className="flex flex-wrap items-center gap-2">
-
-                      <h3 className="text-[15px] font-semibold text-white">
-                        Employee Management Portal
-                      </h3>
-
-                      <span className="px-2.5 py-1 rounded-[5px] text-[10.5px] font-medium bg-[#c084fc]/[0.12] text-[#c084fc] border border-[#c084fc]/20">
-                        Pending
-                      </span>
-
-                    </div>
-
-                    <p className="text-[12.5px] text-[#5b606c] mt-1">
-                      Web Application
-                    </p>
-
-                    <p className="text-[13px] text-[#8b909c] mt-3 leading-relaxed">
-                      Employee attendance, leave, and management portal.
-                    </p>
-
-                  </div>
-
-                </div>
-
-                {/* View Project */}
-                <button
-                  type="button"
-                  className="flex items-center justify-center gap-1.5 h-[38px] px-4 rounded-[8px] text-[12.5px] font-medium text-[#f0a83b] border border-[#f0a83b]/20 hover:bg-[#f0a83b]/[0.08] transition-colors cursor-pointer shrink-0"
-                >
-                  View Project
-                  <FiArrowUpRight size={14} />
-                </button>
-
-              </div>
-
-              {/* Testing Progress Card */}
-              <div className="mt-5 p-4 rounded-[10px] bg-[#0d0f14] border border-white/[0.06]">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-                    <p className="text-[12px] text-[#8b909c]">
-                      Testing Progress
-                    </p>
-
-                    <p className="text-[20px] font-semibold text-white mt-1">
-                      20%
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-center w-10 h-10 rounded-[8px] bg-[#c084fc]/[0.12] text-[#c084fc]">
-                    <FiClock size={18} />
-                  </div>
-
-                </div>
-
-              </div>
-
-              {/* Project Details */}
-              <div className="flex flex-wrap items-center gap-5 mt-5 pt-4 border-t border-white/[0.06]">
-
-                <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
-                  <BsBug size={14} />
-                  2 Bugs
-                </span>
-
-                <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
-                  <FiCheckSquare size={14} />
-                  10 Tests
-                </span>
-
-                <span className="flex items-center gap-1.5 text-[12px] text-[#8b909c]">
-                  <HiOutlineCalendar size={14} />
-                  Sep 15, 2026
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* Testing Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-
-            {/* Testing Status */}
-            <div className="p-6 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-
-              <h2 className="text-[16px] font-semibold text-white mb-5">
-                Testing Status
-              </h2>
-
-              <div className="flex items-center justify-between p-4 rounded-[10px] bg-white/[0.02] border border-white/[0.06]">
-
-                <div className="flex items-center gap-3">
-
-                  <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#f0a83b]/[0.12] text-[#f0a83b]">
-                    <FiClock size={17} />
-                  </span>
-
-                  <div>
-
-                    <p className="text-[13.5px] font-medium text-white">
-                      Active Testing
-                    </p>
-
-                    <p className="text-[12px] text-[#5b606c] mt-0.5">
-                      3 projects are currently active
-                    </p>
-
-                  </div>
-
-                </div>
-
-                <span className="text-[13px] font-semibold text-[#f0a83b]">
-                  3
-                </span>
-
-              </div>
-
-            </div>
-
-            {/* Bug Summary */}
-            <div className="p-6 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-
-              <h2 className="text-[16px] font-semibold text-white mb-5">
-                Bug Summary
-              </h2>
-
-              <div className="flex items-center justify-between p-4 rounded-[10px] bg-white/[0.02] border border-white/[0.06]">
-
-                <div className="flex items-center gap-3">
-
-                  <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#f87171]/[0.12] text-[#f87171]">
-                    <BsBug size={17} />
-                  </span>
-
-                  <div>
-
-                    <p className="text-[13.5px] font-medium text-white">
-                      Reported Bugs
-                    </p>
-
-                    <p className="text-[12px] text-[#5b606c] mt-0.5">
-                      Issues found during testing
-                    </p>
-
-                  </div>
-
-                </div>
-
-                <span className="text-[13px] font-semibold text-[#f87171]">
-                  25
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
+            {showReportModal && (
+                <TesterReportBugModal
+                    initialProjectId={reportProjectId}
+                    onClose={() => {
+                        setShowReportModal(false)
+                        setReportProjectId(null)
+                    }}
+                    getBugs={getBugs}
+                />
+            )}
 
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default TesterProjects;

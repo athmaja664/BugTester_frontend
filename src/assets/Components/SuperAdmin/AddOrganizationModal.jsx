@@ -12,7 +12,7 @@ const initialFormState = {
     adminPassword: "",
 };
 
-function AddOrganizationModal({ onClose }) {
+function AddOrganizationModal({ onClose , onCreated }) {
   const navigate = useNavigate()
   const [formData, setFormData] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
@@ -42,9 +42,11 @@ function AddOrganizationModal({ onClose }) {
     try {
         await createOrganizationAPI(formData, reqHeader)
         toast.success('Organization added successfully')
-        setFormData(initialFormState); // ✅ reset after success
+        setFormData(initialFormState); 
+        onCreated?.()
         onClose()
         navigate('/superadmin/dashboard')
+        
     } catch (err) {
         toast.error(err.response?.data?.message || 'Failed to create organization')
     } finally {

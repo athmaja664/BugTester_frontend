@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import LeadSidebar from "../../Components/Lead/LeadSidebar";
-import { AiOutlineSearch, AiOutlineProject } from "react-icons/ai";
+import { AiOutlineSearch, AiOutlineProject, AiOutlineClose } from "react-icons/ai";
 import { MdOutlineEdit } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import {
@@ -8,6 +8,8 @@ import {
   HiOutlinePhone,
   HiOutlineCalendar,
   HiOutlineShieldCheck,
+  HiOutlineLocationMarker,
+  HiOutlineUser,
 } from "react-icons/hi";
 import { BsBug } from "react-icons/bs";
 import toast from "react-hot-toast";
@@ -19,10 +21,11 @@ import {
   getBugsAPI,
   getMyActivityAPI,
 } from "../../../../services/allAPI";
+import { FiBriefcase } from "react-icons/fi";
 
 function LeadProfile() {
   const [profile, setProfile] = useState(null)
-  const [isEditing, setIsEditing] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
   const [formData, setFormData] = useState({ name: "", phone: "", location: "" })
   const [saving, setSaving] = useState(false)
 
@@ -41,11 +44,6 @@ function LeadProfile() {
       const response = await getMyProfileAPI(reqHeader)
       if (response.status === 200) {
         setProfile(response.data.user)
-        setFormData({
-          name: response.data.user.name || "",
-          phone: response.data.user.phone || "",
-          location: response.data.user.location || ""
-        })
       }
     } catch (err) {
       toast.error('Failed to load profile')
@@ -95,18 +93,32 @@ function LeadProfile() {
     getActivity()
   }, [])
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+  // close the modal with the Escape key, and stop the page scrolling behind it
+  useEffect(() => {
+    if (!showEditModal) return
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setShowEditModal(false)
+    }
+    document.body.style.overflow = "hidden"
+    window.addEventListener("keydown", onKeyDown)
+    return () => {
+      document.body.style.overflow = ""
+      window.removeEventListener("keydown", onKeyDown)
+    }
+  }, [showEditModal])
 
-  const handleCancelEdit = () => {
+  const openEditModal = () => {
     setFormData({
       name: profile?.name || "",
       phone: profile?.phone || "",
       location: profile?.location || ""
     })
-    setIsEditing(false)
+    setShowEditModal(true)
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleSaveProfile = async () => {
@@ -114,6 +126,7 @@ function LeadProfile() {
       toast.error('Name is required')
       return
     }
+    if (saving) return
 
     try {
       setSaving(true)
@@ -121,8 +134,8 @@ function LeadProfile() {
       const response = await updateMyProfileAPI(formData, reqHeader)
       if (response.status === 200) {
         toast.success('Profile updated successfully')
-        setProfile(response.data.user)
-        setIsEditing(false)
+        await getProfile()
+        setShowEditModal(false)
       } else {
         toast.error(response?.response?.data?.message || 'Failed to update profile')
       }
@@ -206,6 +219,17 @@ function LeadProfile() {
 
   const initials = getInitials(profile?.name)
 
+  // read-only row used in the Account Details card
+  const InfoRow = ({ label, icon: Icon, value }) => (
+    <div className="flex flex-col gap-1.5 min-w-0">
+      <label className="text-[12.5px] font-medium text-[#a8abb8]">{label}</label>
+      <div className="flex items-center gap-2.5 h-[44px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 min-w-0">
+        <Icon className="text-[#5b606c] shrink-0" size={16} />
+        <span className="text-[14px] text-white truncate">{value}</span>
+      </div>
+    </div>
+  )
+
   return (
     <div className="flex min-h-screen bg-[#0d0f14]">
       <LeadSidebar />
@@ -213,69 +237,63 @@ function LeadProfile() {
       {/* right column */}
       <div className="flex-1 flex flex-col min-w-0">
 
-        {/* header */}
-        <div className="sticky top-0 z-20 flex items-center justify-between gap-4 h-[72px] px-5 lg:px-8 bg-[#0d0f14]/95 backdrop-blur border-b border-white/[0.06]">
+        {/* header (name and initials removed) */}
+        <div className="sticky top-0 z-20 flex items-center justify-between gap-3 h-[64px] sm:h-[72px] pl-16 pr-4 lg:pl-8 lg:pr-8 bg-[#0d0f14]/95 backdrop-blur border-b border-white/[0.06]">
 
-          <h1 className="text-[18px] font-semibold text-white pl-14 lg:pl-0">
+          <h1 className="text-[16px] sm:text-[18px] font-semibold text-white truncate">
             Profile
           </h1>
 
-          <div className="flex items-center gap-4">
-
-            <div className="hidden sm:flex items-center gap-2 h-[40px] px-3.5 w-[240px] bg-white/[0.03] border border-white/10 rounded-[8px] focus-within:border-[#f0a83b]">
-              <AiOutlineSearch className="text-[#5b606c]" size={17} />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="flex-1 w-full bg-transparent border-none outline-none text-[13.5px] text-white placeholder:text-[#5b606c]"
-              />
-            </div>
-
-            <div className="flex items-center gap-2.5 pl-2 pr-1 sm:pr-3 h-10 rounded-[8px] hover:bg-white/[0.04] cursor-pointer">
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.06] text-[#c7c9d1] text-[12.5px] font-semibold">
-                {initials}
-              </span>
-              <span className="hidden sm:block text-[13.5px] font-medium text-white">
-                {profile?.name || "Lead"}
-              </span>
-            </div>
-
+          <div className="hidden md:flex items-center gap-2 h-[40px] px-3.5 w-[240px] shrink-0 bg-white/[0.03] border border-white/10 rounded-[8px] focus-within:border-[#f0a83b]">
+            <AiOutlineSearch className="text-[#5b606c]" size={17} />
+            <input
+              type="text"
+              placeholder="Search..."
+              className="flex-1 w-full bg-transparent border-none outline-none text-[13.5px] text-white placeholder:text-[#5b606c]"
+            />
           </div>
+
         </div>
 
         {/* main content */}
-        <div className="flex-1 p-5 lg:p-8">
+        <div className="flex-1 p-4 sm:p-5 lg:p-8">
 
           {/* page header */}
-          <div className="mb-8">
-            <h1 className="text-[22px] font-semibold text-white">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-[20px] sm:text-[22px] font-semibold text-white">
               Profile
             </h1>
-            <p className="text-[14px] text-[#8b909c] mt-1">
+            <p className="text-[13px] sm:text-[14px] text-[#8b909c] mt-1">
               Manage your account information
             </p>
           </div>
 
           {/* profile banner */}
-          <div className="p-6 bg-[#161922] border border-white/[0.06] rounded-[14px] mb-6">
+          <div className="p-4 sm:p-6 bg-[#161922] border border-white/[0.06] rounded-[14px] mb-5 sm:mb-6">
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 min-w-0">
 
-                <span className="flex items-center justify-center w-16 h-16 rounded-full bg-[#f0a83b]/[0.12] border border-[#f0a83b]/25 text-[#f0a83b] text-[20px] font-semibold shrink-0">
+                <span className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#f0a83b]/[0.12] border border-[#f0a83b]/25 text-[#f0a83b] text-[18px] sm:text-[20px] font-semibold shrink-0">
                   {initials}
                 </span>
 
-                <div>
-                  <h2 className="text-[18px] font-semibold text-white">
+                <div className="min-w-0">
+                  <h2 className="text-[17px] sm:text-[18px] font-semibold text-white truncate">
                     {profile?.name || "—"}
                   </h2>
 
-                  <p className="text-[13.5px] text-[#8b909c] mt-0.5">
+                  <p className="text-[13px] sm:text-[13.5px] text-[#8b909c] mt-0.5 truncate">
                     {profile?.email || "—"}
                   </p>
 
+                  {profile?.organization_name && (
+                    <p className="flex items-center gap-1.5 text-[12.5px] sm:text-[13px] text-[#f0a83b] mt-1 min-w-0">
+                      <FiBriefcase size={13} className="shrink-0" />
+                      <span className="truncate">{profile.organization_name}</span>
+                    </p>
+                  )}
                   <span className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 text-[12px] font-medium rounded-[5px] bg-[#f0a83b]/[0.12] text-[#f0a83b] border border-[#f0a83b]/25">
                     <HiOutlineShieldCheck size={13} />
                     {profile?.role || "Lead"}
@@ -284,29 +302,27 @@ function LeadProfile() {
 
               </div>
 
-              {!isEditing && (
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  className="flex items-center justify-center gap-2 px-4 h-[42px] rounded-[8px] text-[14px] font-semibold text-[#0d0f14] bg-[#f0a83b] hover:bg-[#f5bc6b] transition-colors cursor-pointer shrink-0"
-                >
-                  <MdOutlineEdit size={16} />
-                  Edit Profile
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={openEditModal}
+                className="flex items-center justify-center gap-2 px-4 h-[42px] w-full sm:w-auto rounded-[8px] text-[14px] font-semibold text-[#0d0f14] bg-[#f0a83b] hover:bg-[#f5bc6b] transition-colors cursor-pointer shrink-0"
+              >
+                <MdOutlineEdit size={16} />
+                Edit Profile
+              </button>
 
             </div>
 
           </div>
 
           {/* statistics */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-5 sm:mb-6">
 
-            <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-              <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#f0a83b]/[0.12] text-[#f0a83b] mb-4">
+            <div className="p-4 sm:p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+              <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#f0a83b]/[0.12] text-[#f0a83b] mb-3 sm:mb-4">
                 <AiOutlineProject size={17} />
               </span>
-              <p className="text-[24px] font-semibold text-white">
+              <p className="text-[22px] sm:text-[24px] font-semibold text-white">
                 {projects.length}
               </p>
               <p className="text-[13px] text-[#8b909c] mt-1">
@@ -314,11 +330,11 @@ function LeadProfile() {
               </p>
             </div>
 
-            <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-              <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#576aff]/[0.12] text-[#8b98ff] mb-4">
+            <div className="p-4 sm:p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+              <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#576aff]/[0.12] text-[#8b98ff] mb-3 sm:mb-4">
                 <BsBug size={17} />
               </span>
-              <p className="text-[24px] font-semibold text-white">
+              <p className="text-[22px] sm:text-[24px] font-semibold text-white">
                 {bugsReviewed}
               </p>
               <p className="text-[13px] text-[#8b909c] mt-1">
@@ -326,11 +342,11 @@ function LeadProfile() {
               </p>
             </div>
 
-            <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-              <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#4ade80]/[0.12] text-[#4ade80] mb-4">
+            <div className="p-4 sm:p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+              <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#4ade80]/[0.12] text-[#4ade80] mb-3 sm:mb-4">
                 <CgProfile size={17} />
               </span>
-              <p className="text-[24px] font-semibold text-white">
+              <p className="text-[22px] sm:text-[24px] font-semibold text-white">
                 {teamMemberIds.size}
               </p>
               <p className="text-[13px] text-[#8b909c] mt-1">
@@ -341,140 +357,38 @@ function LeadProfile() {
           </div>
 
           {/* account details + activity */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
 
-            {/* account details */}
-            <div className="lg:col-span-2 p-6 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+            {/* account details (read-only, edit happens in the modal) */}
+            <div className="lg:col-span-2 p-4 sm:p-6 bg-[#161922] border border-white/[0.06] rounded-[14px]">
 
-              <h3 className="text-[16px] font-semibold text-white mb-5">
+              <h3 className="text-[15px] sm:text-[16px] font-semibold text-white mb-5">
                 Account Details
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
-                {/* Full Name */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    readOnly={!isEditing}
-                    className={`h-[44px] px-3.5 rounded-[8px] border text-[14px] text-white outline-none transition-colors ${isEditing ? "bg-white/[0.03] border-white/10 focus:border-[#f0a83b]" : "bg-white/[0.03] border-white/10"}`}
-                  />
-                </div>
-
-                {/* Email */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
-                    Email Address
-                  </label>
-                  <div className="flex items-center gap-2.5 h-[44px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10">
-                    <HiOutlineMail className="text-[#5b606c]" size={16} />
-                    <span className="text-[14px] text-white">
-                      {profile?.email || "—"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Phone */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
-                    Phone Number
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="Enter phone number"
-                      className="h-[44px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[14px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
-                    />
-                  ) : (
-                    <div className="flex items-center gap-2.5 h-[44px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10">
-                      <HiOutlinePhone className="text-[#5b606c]" size={16} />
-                      <span className="text-[14px] text-white">
-                        {profile?.phone || "Not set"}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Role */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
-                    Role
-                  </label>
-                  <input
-                    type="text"
-                    value={profile?.role || "—"}
-                    readOnly
-                    className="h-[44px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[14px] text-white outline-none"
-                  />
-                </div>
-
-                {/* Location */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
-                    Location
-                  </label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    readOnly={!isEditing}
-                    placeholder={isEditing ? "Enter location" : ""}
-                    className="h-[44px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[14px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
-                  />
-                </div>
-
-                {/* Joined Date */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-[#a8abb8]">
-                    Joined Date
-                  </label>
-                  <div className="flex items-center gap-2.5 h-[44px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10">
-                    <HiOutlineCalendar className="text-[#5b606c]" size={16} />
-                    <span className="text-[14px] text-white">
-                      {profile?.created_at ? new Date(profile.created_at).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) : "—"}
-                    </span>
-                  </div>
-                </div>
-
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                <InfoRow label="Full Name" icon={HiOutlineUser} value={profile?.name || "—"} />
+                <InfoRow label="Email Address" icon={HiOutlineMail} value={profile?.email || "—"} />
+                <InfoRow label="Phone Number" icon={HiOutlinePhone} value={profile?.phone || "Not set"} />
+                <InfoRow label="Role" icon={HiOutlineShieldCheck} value={profile?.role || "—"} />
+                <InfoRow label="Location" icon={HiOutlineLocationMarker} value={profile?.location || "Not set"} />
+                <InfoRow
+                  label="Joined Date"
+                  icon={HiOutlineCalendar}
+                  value={
+                    profile?.created_at
+                      ? new Date(profile.created_at).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })
+                      : "—"
+                  }
+                />
               </div>
-
-              {isEditing && (
-                <div className="flex gap-3 mt-7">
-                  <button
-                    type="button"
-                    onClick={handleCancelEdit}
-                    className="h-[42px] px-5 rounded-[8px] text-[13.5px] font-medium text-[#a8abb8] border border-white/10 hover:bg-white/[0.04] hover:text-white transition-colors cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleSaveProfile}
-                    disabled={saving}
-                    className="h-[42px] px-5 rounded-[8px] text-[13.5px] font-semibold text-[#0d0f14] bg-[#f0a83b] hover:bg-[#f5bc6b] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {saving ? 'Saving...' : 'Save Changes'}
-                  </button>
-                </div>
-              )}
 
             </div>
 
             {/* recent activity */}
-            <div className="p-6 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+            <div className="p-4 sm:p-6 bg-[#161922] border border-white/[0.06] rounded-[14px]">
 
-              <h3 className="text-[16px] font-semibold text-white mb-5">
+              <h3 className="text-[15px] sm:text-[16px] font-semibold text-white mb-5">
                 Recent Activity
               </h3>
 
@@ -487,9 +401,9 @@ function LeadProfile() {
                   {activity.slice(0, 6).map((item, index) => (
                     <div key={item.id || index} className="flex items-start gap-3">
                       <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#f0a83b] shrink-0"></span>
-                      <div>
-                        <p className="text-[13.5px] text-[#c7c9d1] leading-snug">
-                          {item.description || item.action}
+                      <div className="min-w-0">
+                        <p className="text-[13.5px] text-[#c7c9d1] leading-snug break-words">
+                          {item.message || item.description || item.action}
                         </p>
                         <p className="text-[12px] text-[#5b606c] mt-1">
                           {timeAgo(item.created_at)}
@@ -505,13 +419,13 @@ function LeadProfile() {
           </div>
 
           {/* security */}
-          <div className="p-6 bg-[#161922] border border-white/[0.06] rounded-[14px] mt-6">
+          <div className="p-4 sm:p-6 bg-[#161922] border border-white/[0.06] rounded-[14px] mt-5 sm:mt-6">
 
-            <h3 className="text-[16px] font-semibold text-white mb-5">
+            <h3 className="text-[15px] sm:text-[16px] font-semibold text-white mb-5">
               Security
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-[12.5px] font-medium text-[#a8abb8]">
@@ -561,7 +475,7 @@ function LeadProfile() {
               type="button"
               onClick={handleUpdatePassword}
               disabled={changingPassword}
-              className="h-[42px] px-5 mt-6 rounded-[8px] text-[13.5px] font-semibold text-[#0d0f14] bg-[#f0a83b] hover:bg-[#f5bc6b] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              className="h-[42px] px-5 mt-6 w-full sm:w-auto rounded-[8px] text-[13.5px] font-semibold text-[#0d0f14] bg-[#f0a83b] hover:bg-[#f5bc6b] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {changingPassword ? 'Updating...' : 'Update Password'}
             </button>
@@ -571,6 +485,99 @@ function LeadProfile() {
         </div>
 
       </div>
+
+      {/* Edit Profile modal (transparent blurred backdrop) */}
+      {showEditModal && (
+        <div
+          className="fixed inset-0 z-[999] flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm"
+          onClick={() => setShowEditModal(false)}
+        >
+          <div
+            className="bg-[#161922] border border-white/[0.08] rounded-[16px] shadow-lg w-full max-w-[480px] max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+
+            {/* header */}
+            <div className="flex items-center justify-between px-5 sm:px-7 pt-6 sm:pt-7 pb-5 border-b border-white/[0.06]">
+              <h3 className="text-lg font-semibold text-white">Edit Profile</h3>
+              <button
+                type="button"
+                onClick={() => setShowEditModal(false)}
+                aria-label="Close"
+                className="w-8 h-8 flex items-center justify-center rounded-[8px] text-[#5b606c] hover:bg-white/[0.04] hover:text-white transition-colors cursor-pointer"
+              >
+                <AiOutlineClose size={16} />
+              </button>
+            </div>
+
+            {/* form */}
+            <div className="px-5 sm:px-7 py-6 flex flex-col gap-5">
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[12.5px] font-medium text-[#a8abb8]">Full Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter your name"
+                  autoFocus
+                  className="h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[12.5px] font-medium text-[#a8abb8]">Phone Number</label>
+                <input
+                  type="text"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Enter phone number"
+                  className="h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[12.5px] font-medium text-[#a8abb8]">Location</label>
+                <input
+                  type="text"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  placeholder="Enter location"
+                  className="h-[42px] px-3.5 rounded-[8px] bg-white/[0.03] border border-white/10 text-[13.5px] text-white placeholder:text-[#5b606c] outline-none focus:border-[#f0a83b] transition-colors"
+                />
+              </div>
+
+              <p className="text-[12px] text-[#5b606c]">
+                Your email and role can only be changed by an administrator.
+              </p>
+
+            </div>
+
+            {/* footer */}
+            <div className="flex items-center justify-center gap-3 px-5 sm:px-7 py-5 border-t border-white/[0.06]">
+              <button
+                type="button"
+                onClick={() => setShowEditModal(false)}
+                className="h-[44px] px-5 text-sm font-medium text-[#a8abb8] hover:text-white cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveProfile}
+                disabled={saving}
+                className="h-[44px] px-6 text-sm font-bold text-[#0d0f14] bg-[#f0a83b] rounded-[8px] hover:bg-[#f5bc6b] disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
+              >
+                {saving ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );

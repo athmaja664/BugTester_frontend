@@ -144,3 +144,18 @@ export const superAdminloginAPI=async(reqBody)=>{
 export const createOrganizationAPI=async(reqBody,reqHeader)=>{
   return await commonAPI('POST',`${serverURL}/api/superadmin/organization`,reqBody,reqHeader)
 }
+
+// SUPERADMIN GET ALL ORGANIZATIONS
+export const getOrganizationsAPI = async (reqHeader) => {
+  return await commonAPI('GET', `${serverURL}/api/superadmin/organization`, {}, reqHeader)
+}
+
+// SUPERADMIN GET ONE ORGANIZATION (with members + counts)
+export const getOrganizationByIdAPI = async (id, reqHeader) => {
+  return await commonAPI('GET', `${serverURL}/api/superadmin/organization/${id}`, {}, reqHeader)
+}
+
+// SUPERADMIN ACTIVATE / DEACTIVATE ORGANIZATION
+export const updateOrgBillingStatusAPI = async (id, reqBody, reqHeader) => {
+  return await commonAPI('PUT', `${serverURL}/api/superadmin/organization/${id}/billing-status`, reqBody, reqHeader)
+}

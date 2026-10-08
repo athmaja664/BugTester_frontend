@@ -1,560 +1,244 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DeveloperSidebar from "../../Components/Developer/DeveloperSidebar";
+import DeveloperUpdateStatusModal from "../../Components/Developer/DeveloperUpdateStatusModal";
+import BugsTable from "../../Components/Common/BugsTable";
 import { AiOutlineSearch } from "react-icons/ai";
-import {
-  HiOutlineCalendar,
-  HiOutlineUser,
-} from "react-icons/hi";
-import {
-  FiMoreHorizontal,
-  FiAlertCircle,
-} from "react-icons/fi";
-
+import { FiAlertCircle } from "react-icons/fi";
+import toast from "react-hot-toast";
+import { getBugsAPI, getProjectsAPI } from "../../../../services/allAPI";
 
 function DeveloperBugs() {
-  return (
-    <div className="flex min-h-screen bg-[#0d0f14]">
+    const [bugData, setBugData] = useState([])
+    const [projectsMap, setProjectsMap] = useState({})
+    const [selectedBug, setSelectedBug] = useState(null)
+    const [showStatusModal, setShowStatusModal] = useState(false)
+    const [searchTerm, setSearchTerm] = useState("")
+    const [currentPage, setCurrentPage] = useState(1)
+    const token = localStorage.getItem('token')
 
-      {/* Sidebar */}
-      <DeveloperSidebar />
+    const getBugs = async () => {
+        try {
+            const reqHeader = { Authorization: `Bearer ${token}` }
+            const response = await getBugsAPI(reqHeader)
+            if (response.status === 200) {
+                setBugData(response.data)
+            }
+        } catch (err) {
+            toast.error(err?.response?.data?.message || 'Failed to fetch bugs')
+        }
+    }
 
-      {/* Right column */}
-      <div className="flex-1 flex flex-col min-w-0">
+    const getLookups = async () => {
+        try {
+            const reqHeader = { Authorization: `Bearer ${token}` }
+            const projectsRes = await getProjectsAPI(reqHeader)
+            if (projectsRes.status === 200) {
+                const map = {}
+                projectsRes.data.projects.forEach((p) => { map[p.id] = p.name })
+                setProjectsMap(map)
+            }
+        } catch (err) {
+            toast.error('Failed to load project data')
+        }
+    }
 
-        {/* Header */}
-        <div className="sticky top-0 z-20 flex items-center justify-between gap-4 h-[72px] px-5 lg:px-8 bg-[#0d0f14]/95 backdrop-blur border-b border-white/[0.06]">
+    useEffect(() => {
+        getBugs()
+        getLookups()
+    }, [])
 
-          <h1 className="text-[18px] font-semibold text-white pl-14 lg:pl-0">
-            Bugs
-          </h1>
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [searchTerm])
 
-          <div className="flex items-center gap-4">
+    const handleRowClick = (bug) => {
+        setSelectedBug(bug)
+        setShowStatusModal(true)
+    }
 
-            {/* Search */}
-            <div className="hidden sm:flex items-center gap-2 h-[40px] px-3.5 w-[260px] bg-white/[0.03] border border-white/10 rounded-[8px] focus-within:border-[#f0a83b]">
+    const openCount = bugData.filter((b) => ['New', 'Assigned'].includes(b.status)).length
+    const inProgressCount = bugData.filter((b) => b.status === 'In Progress').length
+    const resolvedCount = bugData.filter((b) => ['Resolved', 'Verified', 'Closed'].includes(b.status)).length
 
-              <AiOutlineSearch
-                className="text-[#5b606c]"
-                size={17}
-              />
+    const filteredBugs = bugData.filter((item) =>
+        item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        `BUG-${item.id}`.toLowerCase().includes(searchTerm.toLowerCase())
+    )
 
-              <input
-                type="text"
-                placeholder="Search bugs..."
-                className="flex-1 w-full bg-transparent border-none outline-none text-[13.5px] text-white placeholder:text-[#5b606c]"
-              />
+    const bugsPerPage = 10
+    const lastIndex = currentPage * bugsPerPage
+    const firstIndex = lastIndex - bugsPerPage
+    const currentBugs = filteredBugs.slice(firstIndex, lastIndex)
+    const totalPages = Math.ceil(filteredBugs.length / bugsPerPage)
 
-            </div>
+    return (
+        <div className="flex min-h-screen bg-[#0d0f14]">
 
-            {/* Developer */}
-            <div className="flex items-center gap-2.5 pl-2 pr-1 sm:pr-3 h-10 rounded-[8px] hover:bg-white/[0.04] cursor-pointer">
+            <DeveloperSidebar />
 
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.06] text-[#c7c9d1] text-[12px] font-semibold">
-                DV
-              </span>
+            <div className="flex-1 flex flex-col min-w-0">
 
-              <span className="hidden sm:block text-[13.5px] font-medium text-white">
-                Developer
-              </span>
+                {/* Header */}
+                <div className="sticky top-0 z-20 flex items-center justify-between gap-4 h-[72px] px-5 lg:px-8 bg-[#0d0f14]/95 backdrop-blur border-b border-white/[0.06]">
 
-            </div>
+                    <h1 className="text-[18px] font-semibold text-white pl-14 lg:pl-0">
+                        Bugs
+                    </h1>
 
-          </div>
-        </div>
-
-
-        {/* Main content */}
-        <div className="flex-1 p-5 lg:p-8">
-
-          {/* Page heading */}
-          <div className="mb-7">
-
-            <h1 className="text-[22px] font-semibold text-white">
-              My Bugs
-            </h1>
-
-            <p className="text-[14px] text-[#8b909c] mt-1">
-              View and track bugs assigned to you
-            </p>
-
-          </div>
-
-
-          {/* Summary cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-
-            {/* Open */}
-            <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-
-              <div className="flex items-center justify-between">
-
-                <div>
-
-                  <p className="text-[12.5px] text-[#8b909c]">
-                    Open Bugs
-                  </p>
-
-                  <p className="text-[25px] font-semibold text-white mt-2">
-                    12
-                  </p>
+                    
 
                 </div>
 
-                <span className="flex items-center justify-center w-10 h-10 rounded-[9px] bg-[#f0a83b]/[0.12] text-[#f0a83b]">
-                  <FiAlertCircle size={19} />
-                </span>
+                {/* Main content */}
+                <div className="flex-1 p-5 lg:p-8">
 
-              </div>
+                    <div className="mb-7">
+                        <h1 className="text-[22px] font-semibold text-white">My Bugs</h1>
+                        <p className="text-[14px] text-[#8b909c] mt-1">
+                            View and track bugs assigned to you
+                        </p>
+                    </div>
 
-            </div>
+                    {/* Summary cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
 
+                        <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-[12.5px] text-[#8b909c]">Open Bugs</p>
+                                    <p className="text-[25px] font-semibold text-white mt-2">{openCount}</p>
+                                </div>
+                                <span className="flex items-center justify-center w-10 h-10 rounded-[9px] bg-[#f0a83b]/[0.12] text-[#f0a83b]">
+                                    <FiAlertCircle size={19} />
+                                </span>
+                            </div>
+                        </div>
 
-            {/* In Progress */}
-            <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+                        <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-[12.5px] text-[#8b909c]">In Progress</p>
+                                    <p className="text-[25px] font-semibold text-white mt-2">{inProgressCount}</p>
+                                </div>
+                                <span className="flex items-center justify-center w-10 h-10 rounded-[9px] bg-[#576aff]/[0.12] text-[#8b98ff]">
+                                    <FiAlertCircle size={19} />
+                                </span>
+                            </div>
+                        </div>
 
-              <div className="flex items-center justify-between">
-
-                <div>
-
-                  <p className="text-[12.5px] text-[#8b909c]">
-                    In Progress
-                  </p>
-
-                  <p className="text-[25px] font-semibold text-white mt-2">
-                    5
-                  </p>
-
-                </div>
-
-                <span className="flex items-center justify-center w-10 h-10 rounded-[9px] bg-[#576aff]/[0.12] text-[#8b98ff]">
-                  <FiAlertCircle size={19} />
-                </span>
-
-              </div>
-
-            </div>
-
-
-            {/* Resolved */}
-            <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
-
-              <div className="flex items-center justify-between">
-
-                <div>
-
-                  <p className="text-[12.5px] text-[#8b909c]">
-                    Resolved
-                  </p>
-
-                  <p className="text-[25px] font-semibold text-white mt-2">
-                    18
-                  </p>
-
-                </div>
-
-                <span className="flex items-center justify-center w-10 h-10 rounded-[9px] bg-[#4ade80]/[0.12] text-[#4ade80]">
-                  <FiAlertCircle size={19} />
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          {/* Bug list */}
-          <div className="bg-[#161922] border border-white/[0.06] rounded-[14px] overflow-hidden">
-
-            {/* List header */}
-            <div className="flex items-center justify-between gap-4 px-5 lg:px-6 py-4 border-b border-white/[0.06]">
-
-              <div>
-
-                <h2 className="text-[16px] font-semibold text-white">
-                  Assigned Bugs
-                </h2>
-
-                <p className="text-[12.5px] text-[#5b606c] mt-1">
-                  Bugs currently assigned to you
-                </p>
-
-              </div>
-
-              <button
-                type="button"
-                className="hidden sm:flex items-center justify-center h-[38px] px-4 rounded-[8px] text-[13px] font-medium text-[#a8abb8] border border-white/10 hover:bg-white/[0.04] hover:text-white transition-colors cursor-pointer"
-              >
-                View All
-              </button>
-
-            </div>
-
-
-            {/* Bug 1 */}
-            <div className="px-5 lg:px-6 py-5 border-b border-white/[0.06] hover:bg-white/[0.02] transition-colors">
-
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-
-                <div className="flex items-start gap-3">
-
-                  <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#f0a83b]/[0.10] text-[#f0a83b] shrink-0">
-                    <FiAlertCircle size={17} />
-                  </span>
-
-                  <div>
-
-                    <div className="flex flex-wrap items-center gap-2">
-
-                      <h3 className="text-[14.5px] font-semibold text-white">
-                        Checkout payment fails
-                      </h3>
-
-                      <span className="px-2 py-0.5 rounded-[5px] bg-[#f0a83b]/[0.10] border border-[#f0a83b]/20 text-[#f0a83b] text-[10.5px] font-medium">
-                        High
-                      </span>
+                        <div className="p-5 bg-[#161922] border border-white/[0.06] rounded-[14px]">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-[12.5px] text-[#8b909c]">Resolved</p>
+                                    <p className="text-[25px] font-semibold text-white mt-2">{resolvedCount}</p>
+                                </div>
+                                <span className="flex items-center justify-center w-10 h-10 rounded-[9px] bg-[#4ade80]/[0.12] text-[#4ade80]">
+                                    <FiAlertCircle size={19} />
+                                </span>
+                            </div>
+                        </div>
 
                     </div>
 
-                    <p className="text-[12.5px] text-[#8b909c] mt-1">
-                      E-Commerce Platform
-                    </p>
+                    {/* Search */}
+                    <div className="flex items-center gap-2 h-[42px] px-3.5 mb-6 bg-[#161922] border border-white/[0.06] rounded-[14px] focus-within:border-[#f0a83b]">
+                        <AiOutlineSearch className="text-[#5b606c]" size={17} />
+                        <input
+                            type="text"
+                            placeholder="Search bugs..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="flex-1 bg-transparent border-none outline-none text-[13.5px] text-white placeholder:text-[#5b606c]"
+                        />
+                    </div>
 
-                    <p className="text-[13px] text-[#6f7480] mt-2 leading-relaxed">
-                      Payment fails when users attempt to complete checkout using a saved card.
-                    </p>
+                    {/* Bugs table */}
+                    <div className="p-6 bg-[#161922] border border-white/[0.06] rounded-[14px]">
 
-                  </div>
+                        <div className="mb-6">
+                            <h2 className="text-[16px] font-semibold text-white">Assigned Bugs</h2>
+                            <p className="text-[12px] text-[#5b606c] mt-1">
+                                Click a bug to update its status
+                            </p>
+                        </div>
 
-                </div>
+                        <BugsTable
+                            bugs={currentBugs}
+                            projectsMap={projectsMap}
+                            onEdit={handleRowClick}
+                        />
 
+                        {/* Pagination */}
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-6 border-t border-white/[0.06]">
 
-                <div className="flex items-center gap-3 lg:shrink-0">
+                            <p className="text-[13px] text-[#5b606c]">
+                                Showing{" "}
+                                <span className="text-white font-medium">{filteredBugs.length ? firstIndex + 1 : 0}</span>{" "}
+                                to{" "}
+                                <span className="text-white font-medium">{Math.min(lastIndex, filteredBugs.length)}</span>{" "}
+                                of{" "}
+                                <span className="text-white font-medium">{filteredBugs.length}</span>{" "}
+                                bugs
+                            </p>
 
-                  <span className="px-2.5 py-1 rounded-[6px] bg-[#576aff]/[0.10] border border-[#576aff]/20 text-[#8b98ff] text-[11.5px] font-medium">
-                    In Progress
-                  </span>
+                            <div className="flex items-center gap-2">
 
-                  <button
-                    type="button"
-                    className="text-[#6b707c] hover:text-white cursor-pointer"
-                  >
-                    <FiMoreHorizontal size={19} />
-                  </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setCurrentPage(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="w-9 h-9 flex items-center justify-center rounded-[8px] border border-white/10 text-[#5b606c] disabled:cursor-not-allowed hover:bg-white/[0.04] cursor-pointer"
+                                >
+                                    &#10094;
+                                </button>
 
-                </div>
+                                {Array.from({ length: totalPages }, (_, index) => (
+                                    <button
+                                        key={index}
+                                        type="button"
+                                        onClick={() => setCurrentPage(index + 1)}
+                                        className={`w-9 h-9 rounded-[8px] text-[13px] font-medium cursor-pointer transition-colors
+                                            ${currentPage === index + 1
+                                                ? "bg-[#f0a83b] text-[#0d0f14]"
+                                                : "border border-white/10 text-[#5b606c] hover:bg-white/[0.04]"
+                                            }`}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                ))}
 
-              </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setCurrentPage(currentPage + 1)}
+                                    disabled={currentPage === totalPages || totalPages === 0}
+                                    className="w-9 h-9 flex items-center justify-center rounded-[8px] border border-white/10 text-[#5b606c] disabled:cursor-not-allowed hover:bg-white/[0.04] cursor-pointer"
+                                >
+                                    &#10095;
+                                </button>
 
+                            </div>
 
-              <div className="flex flex-wrap items-center gap-5 mt-4 pl-12">
-
-                <div className="flex items-center gap-2">
-
-                  <HiOutlineCalendar
-                    className="text-[#5b606c]"
-                    size={15}
-                  />
-
-                  <span className="text-[12px] text-[#8b909c]">
-                    Due Aug 15, 2026
-                  </span>
-
-                </div>
-
-                <div className="flex items-center gap-2">
-
-                  <HiOutlineUser
-                    className="text-[#5b606c]"
-                    size={15}
-                  />
-
-                  <span className="text-[12px] text-[#8b909c]">
-                    Assigned to Developer
-                  </span>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            {/* Bug 2 */}
-            <div className="px-5 lg:px-6 py-5 border-b border-white/[0.06] hover:bg-white/[0.02] transition-colors">
-
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-
-                <div className="flex items-start gap-3">
-
-                  <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#576aff]/[0.10] text-[#8b98ff] shrink-0">
-                    <FiAlertCircle size={17} />
-                  </span>
-
-                  <div>
-
-                    <div className="flex flex-wrap items-center gap-2">
-
-                      <h3 className="text-[14.5px] font-semibold text-white">
-                        Dashboard loading issue
-                      </h3>
-
-                      <span className="px-2 py-0.5 rounded-[5px] bg-[#576aff]/[0.10] border border-[#576aff]/20 text-[#8b98ff] text-[10.5px] font-medium">
-                        Medium
-                      </span>
+                        </div>
 
                     </div>
 
-                    <p className="text-[12.5px] text-[#8b909c] mt-1">
-                      Banking Dashboard
-                    </p>
-
-                    <p className="text-[13px] text-[#6f7480] mt-2 leading-relaxed">
-                      Dashboard widgets take too long to load when multiple transactions are present.
-                    </p>
-
-                  </div>
-
                 </div>
-
-
-                <div className="flex items-center gap-3 lg:shrink-0">
-
-                  <span className="px-2.5 py-1 rounded-[6px] bg-[#576aff]/[0.10] border border-[#576aff]/20 text-[#8b98ff] text-[11.5px] font-medium">
-                    In Progress
-                  </span>
-
-                  <button
-                    type="button"
-                    className="text-[#6b707c] hover:text-white cursor-pointer"
-                  >
-                    <FiMoreHorizontal size={19} />
-                  </button>
-
-                </div>
-
-              </div>
-
-
-              <div className="flex flex-wrap items-center gap-5 mt-4 pl-12">
-
-                <div className="flex items-center gap-2">
-
-                  <HiOutlineCalendar
-                    className="text-[#5b606c]"
-                    size={15}
-                  />
-
-                  <span className="text-[12px] text-[#8b909c]">
-                    Due Aug 18, 2026
-                  </span>
-
-                </div>
-
-                <div className="flex items-center gap-2">
-
-                  <HiOutlineUser
-                    className="text-[#5b606c]"
-                    size={15}
-                  />
-
-                  <span className="text-[12px] text-[#8b909c]">
-                    Assigned to Developer
-                  </span>
-
-                </div>
-
-              </div>
 
             </div>
 
-
-            {/* Bug 3 */}
-            <div className="px-5 lg:px-6 py-5 border-b border-white/[0.06] hover:bg-white/[0.02] transition-colors">
-
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-
-                <div className="flex items-start gap-3">
-
-                  <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#4ade80]/[0.10] text-[#4ade80] shrink-0">
-                    <FiAlertCircle size={17} />
-                  </span>
-
-                  <div>
-
-                    <div className="flex flex-wrap items-center gap-2">
-
-                      <h3 className="text-[14.5px] font-semibold text-white">
-                        Booking confirmation not received
-                      </h3>
-
-                      <span className="px-2 py-0.5 rounded-[5px] bg-[#4ade80]/[0.10] border border-[#4ade80]/20 text-[#4ade80] text-[10.5px] font-medium">
-                        Low
-                      </span>
-
-                    </div>
-
-                    <p className="text-[12.5px] text-[#8b909c] mt-1">
-                      Travel Booking App
-                    </p>
-
-                    <p className="text-[13px] text-[#6f7480] mt-2 leading-relaxed">
-                      Confirmation message is not displayed after a successful hotel booking.
-                    </p>
-
-                  </div>
-
-                </div>
-
-
-                <div className="flex items-center gap-3 lg:shrink-0">
-
-                  <span className="px-2.5 py-1 rounded-[6px] bg-[#4ade80]/[0.10] border border-[#4ade80]/20 text-[#4ade80] text-[11.5px] font-medium">
-                    Resolved
-                  </span>
-
-                  <button
-                    type="button"
-                    className="text-[#6b707c] hover:text-white cursor-pointer"
-                  >
-                    <FiMoreHorizontal size={19} />
-                  </button>
-
-                </div>
-
-              </div>
-
-
-              <div className="flex flex-wrap items-center gap-5 mt-4 pl-12">
-
-                <div className="flex items-center gap-2">
-
-                  <HiOutlineCalendar
-                    className="text-[#5b606c]"
-                    size={15}
-                  />
-
-                  <span className="text-[12px] text-[#8b909c]">
-                    Resolved Aug 10, 2026
-                  </span>
-
-                </div>
-
-                <div className="flex items-center gap-2">
-
-                  <HiOutlineUser
-                    className="text-[#5b606c]"
-                    size={15}
-                  />
-
-                  <span className="text-[12px] text-[#8b909c]">
-                    Assigned to Developer
-                  </span>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            {/* Bug 4 */}
-            <div className="px-5 lg:px-6 py-5 hover:bg-white/[0.02] transition-colors">
-
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-
-                <div className="flex items-start gap-3">
-
-                  <span className="flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#f0a83b]/[0.10] text-[#f0a83b] shrink-0">
-                    <FiAlertCircle size={17} />
-                  </span>
-
-                  <div>
-
-                    <div className="flex flex-wrap items-center gap-2">
-
-                      <h3 className="text-[14.5px] font-semibold text-white">
-                        User profile update error
-                      </h3>
-
-                      <span className="px-2 py-0.5 rounded-[5px] bg-[#f0a83b]/[0.10] border border-[#f0a83b]/20 text-[#f0a83b] text-[10.5px] font-medium">
-                        High
-                      </span>
-
-                    </div>
-
-                    <p className="text-[12.5px] text-[#8b909c] mt-1">
-                      Employee Management
-                    </p>
-
-                    <p className="text-[13px] text-[#6f7480] mt-2 leading-relaxed">
-                      Employee profile changes are not saved correctly after editing contact information.
-                    </p>
-
-                  </div>
-
-                </div>
-
-
-                <div className="flex items-center gap-3 lg:shrink-0">
-
-                  <span className="px-2.5 py-1 rounded-[6px] bg-[#f0a83b]/[0.10] border border-[#f0a83b]/20 text-[#f0a83b] text-[11.5px] font-medium">
-                    Open
-                  </span>
-
-                  <button
-                    type="button"
-                    className="text-[#6b707c] hover:text-white cursor-pointer"
-                  >
-                    <FiMoreHorizontal size={19} />
-                  </button>
-
-                </div>
-
-              </div>
-
-
-              <div className="flex flex-wrap items-center gap-5 mt-4 pl-12">
-
-                <div className="flex items-center gap-2">
-
-                  <HiOutlineCalendar
-                    className="text-[#5b606c]"
-                    size={15}
-                  />
-
-                  <span className="text-[12px] text-[#8b909c]">
-                    Due Aug 20, 2026
-                  </span>
-
-                </div>
-
-                <div className="flex items-center gap-2">
-
-                  <HiOutlineUser
-                    className="text-[#5b606c]"
-                    size={15}
-                  />
-
-                  <span className="text-[12px] text-[#8b909c]">
-                    Assigned to Developer
-                  </span>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
+            {showStatusModal && selectedBug && (
+                <DeveloperUpdateStatusModal
+                    bug={selectedBug}
+                    onClose={() => {
+                        setShowStatusModal(false)
+                        setSelectedBug(null)
+                    }}
+                    getBugs={getBugs}
+                />
+            )}
 
         </div>
-
-      </div>
-
-    </div>
-  );
+    );
 }
-
 
 export default DeveloperBugs;

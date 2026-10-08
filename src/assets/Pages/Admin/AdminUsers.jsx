@@ -114,24 +114,6 @@ function AdminUsers() {
 
                     <div className="flex items-center gap-4">
 
-                      
-
-                        <span className="relative flex items-center justify-center w-10 h-10 rounded-[8px] text-[#a8abb8] hover:bg-white/[0.04] hover:text-white cursor-pointer">
-                            <MdOutlineNotificationsNone size={20} />
-                            <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#f0a83b]"></span>
-                        </span>
-
-                        <div className="relative">
-                            <span className="flex items-center gap-2.5 pl-2 pr-1 sm:pr-3 h-10 rounded-[8px] hover:bg-white/[0.04] cursor-pointer">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.06] text-[#c7c9d1] text-[12.5px] font-semibold">
-                                    AD
-                                </span>
-                                <span className="hidden sm:block text-[13.5px] font-medium text-white">
-                                    Admin
-                                </span>
-                            </span>
-                        </div>
-
                     </div>
 
                 </div>

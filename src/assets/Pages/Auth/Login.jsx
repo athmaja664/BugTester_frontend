@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaBug } from "react-icons/fa6";
 import { HiOutlineMail, HiOutlineLockClosed } from "react-icons/hi";
-import toast, { Toaster } from "react-hot-toast";
-import {loginAPI } from "../../../../services/allAPI";
+import toast from "react-hot-toast";
+import { loginAPI } from "../../../../services/allAPI";
 
 function Login() {
   const navigate = useNavigate();
@@ -12,9 +12,18 @@ function Login() {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
+  // shows the reason once if the user was logged out because their organization was deactivated
+  useEffect(() => {
+    const notice = sessionStorage.getItem('loginNotice')
+    if (notice) {
+      toast.error(notice, { id: 'org-inactive' })
+      sessionStorage.removeItem('loginNotice')
+    }
+  }, [])
+
   const handleLogin = async () => {
     if (!loginData.email || !loginData.password) {
-      toast.error("Please fill the form");
+      toast.error("Please fill the form", { id: 'login-error' });
       return;
     }
     setLoading(true);
@@ -33,13 +42,10 @@ function Login() {
           else if (role === "Tester") navigate("/tester/dashboard");
           else navigate("/");
         }, 800);
-      } else {
-        toast.error(response.data.message || "Invalid email or password");
-        setLoading(false);
       }
     } catch (err) {
       console.log(err);
-      toast.error(err?.response?.data?.message || "Something went wrong");
+      toast.error(err?.response?.data?.message || "Something went wrong", { id: 'login-error' });
       setLoading(false);
     }
   };
@@ -52,8 +58,6 @@ function Login() {
           "radial-gradient(ellipse 900px 600px at 15% 10%, rgba(240,168,59,0.10), transparent 60%), radial-gradient(ellipse 900px 700px at 85% 90%, rgba(87,106,255,0.14), transparent 60%), #0d0f14",
       }}
     >
-      <Toaster position="top-center" />
-
       {/* ambient grid texture */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
@@ -103,20 +107,19 @@ function Login() {
               >
                 Track every bug from report to close
               </h1>
-              
-{/* project note */}
-<div className="mt-10 max-w-[400px] px-4 py-4 rounded-[8px] bg-white/[0.03] border border-white/[0.06]">
-  <p className="text-sm font-medium text-[#a8abb8] mb-1">
-    One place for your entire QA workflow
-  </p>
-  <p className="text-xs leading-5 text-[#6a6f7b]">
-    Report bugs, assign them to developers, track progress, and verify
-    fixes — all from one organized workspace.
-  </p>
-</div>
 
+              {/* project note */}
+              <div className="mt-10 max-w-[400px] px-4 py-4 rounded-[8px] bg-white/[0.03] border border-white/[0.06]">
+                <p className="text-sm font-medium text-[#a8abb8] mb-1">
+                  One place for your entire QA workflow
+                </p>
+                <p className="text-xs leading-5 text-[#6a6f7b]">
+                  Report bugs, assign them to developers, track progress, and verify
+                  fixes — all from one organized workspace.
+                </p>
+              </div>
 
-              {/* lifecycle strip — signature visual, not a stock illustration */}
+              {/* lifecycle strip */}
               <div className="flex flex-col gap-0 mt-8">
                 {[
                   { label: "Reported", color: "#6b7280" },
@@ -198,8 +201,6 @@ function Login() {
                   </span>
                 </div>
               </div>
-
-             
 
               <button
                 type="button"

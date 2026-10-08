@@ -34,6 +34,7 @@ import MyIssues from './assets/Pages/Common/MyIssues';
 
 import Sidebar from './assets/Components/Admin/Sidebar';
 import LeadSidebar from './assets/Components/Lead/LeadSidebar';
+import DeveloperSidebar from './assets/Components/Developer/DeveloperSidebar';
 function App() {
   return (
     <>
@@ -52,6 +53,7 @@ function App() {
         <Route path="/superadmin/dashboard" element={<SuperAdminDashboard />} />
         <Route path="/superadmin/orgdetails" element={<SuperAdminOrgDetail />} />
         <Route path="/superadmin/billing" element={<SuperAdminBilling />} />
+        <Route path="/superadmin/orgdetails/:id" element={<SuperAdminOrgDetail/>}/>
         {/* Lead-Side */}
         <Route path="/leadbugs" element={<LeadBugs />} />
         <Route path="/leadprojects" element={<LeadProjects />} />
@@ -71,9 +73,10 @@ function App() {
         <Route path="/tester/profile" element={<TesterProfile />} />
         {/* Common */}
         <Route path="/common/issues" element={<MyIssues />} />
-
+          
        
-        <Route path="/leadmyissues" element={<MyIssues SidebarComponent={LeadSidebar} />} />
+        
+        <Route path="/developermyissues" element={<MyIssues SidebarComponent={DeveloperSidebar} />} />
       </Routes>
     </>
   )

@@ -115,14 +115,7 @@ function LeadBugs() {
                         Bugs
                     </h1>
 
-                    <div className="flex items-center gap-2.5 pl-2 pr-1 sm:pr-3 h-10 rounded-[8px] hover:bg-white/[0.04] cursor-pointer">
-                        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.06] text-[#c7c9d1] text-[12.5px] font-semibold">
-                            LD
-                        </span>
-                        <span className="hidden sm:block text-[13.5px] font-medium text-white">
-                            Lead
-                        </span>
-                    </div>
+                    
 
                 </div>
 
